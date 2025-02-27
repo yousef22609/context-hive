@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Star, User, Award, DollarSign, MessageCircle, Moon, Sun } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import AnimatedBackground from './AnimatedBackground';
+import Footer from './Footer';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -14,11 +15,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const isLoginPage = location.pathname === '/login';
   const isRegisterPage = location.pathname === '/register';
-
-  // تفعيل الوضع الداكن افتراضيًا
-  React.useEffect(() => {
-    document.documentElement.classList.add('dark');
-  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-secondary/50 ar-text overflow-hidden relative">
@@ -93,13 +89,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </nav>
       )}
 
-      <main className="flex-1 w-full max-w-4xl mx-auto px-4 py-6 z-10">
+      <main className="flex-1 w-full">
         {children}
       </main>
       
-      <footer className="w-full py-4 text-center text-sm text-muted-foreground z-10">
-        جميع الحقوق محفوظة &copy; يوما {new Date().getFullYear()}
-      </footer>
+      <Footer />
       
       {/* لا نعرض زر الواتساب على صفحات تسجيل الدخول والتسجيل لأننا أضفناه فيهم بالفعل */}
       {!isLoginPage && !isRegisterPage && (
