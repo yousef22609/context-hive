@@ -1,16 +1,28 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
-import { Star, User, Lock } from 'lucide-react';
+import { Star, User, Lock, MessageCircle } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useUser();
+  const [showDailyReward, setShowDailyReward] = useState(false);
+  const { login, addPoints } = useUser();
   const navigate = useNavigate();
+
+  // تحقق من المكافأة اليومية
+  useEffect(() => {
+    const lastRewardDate = localStorage.getItem('lastDailyReward');
+    const today = new Date().toDateString();
+    
+    if (lastRewardDate !== today) {
+      setShowDailyReward(true);
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +36,16 @@ const Login: React.FC = () => {
       }
       setIsLoading(false);
     }, 500);
+  };
+  
+  const claimDailyReward = () => {
+    const today = new Date().toDateString();
+    localStorage.setItem('lastDailyReward', today);
+    setShowDailyReward(false);
+    
+    const points = Math.floor(Math.random() * 50) + 50; // مكافأة عشوائية بين 50-100 نقطة
+    addPoints(points);
+    toast.success(`تم إضافة ${points} نقطة كمكافأة يومية!`);
   };
 
   return (
@@ -94,7 +116,38 @@ const Login: React.FC = () => {
               </Link>
             </p>
           </div>
+          
+          {/* مكافأة يومية */}
+          {showDailyReward && (
+            <div className="daily-reward mt-6">
+              <Star className="h-8 w-8 text-primary mx-auto mb-2 animate-star-glow" />
+              <h3 className="font-bold">مكافأة يومية!</h3>
+              <p className="text-sm mb-3">يمكنك الحصول على مكافأة يومية من 50-100 نقطة</p>
+              <button 
+                onClick={claimDailyReward}
+                className="btn-primary"
+              >
+                احصل على المكافأة
+              </button>
+            </div>
+          )}
         </div>
+      </div>
+      
+      {/* زر واتساب للدعم */}
+      <a 
+        href="https://wa.me/01145633198" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="whatsapp-btn"
+        aria-label="تواصل معنا عبر واتساب"
+      >
+        <MessageCircle className="h-6 w-6" />
+      </a>
+      
+      {/* اسم المطور */}
+      <div className="developer-credit">
+        المطور يوسف هشام
       </div>
     </Layout>
   );

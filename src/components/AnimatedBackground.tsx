@@ -7,6 +7,8 @@ interface Star {
   x: number;
   y: number;
   animationDuration: number;
+  animationDelay: number;
+  opacity: number;
 }
 
 const AnimatedBackground: React.FC = () => {
@@ -16,7 +18,7 @@ const AnimatedBackground: React.FC = () => {
     const generateStars = () => {
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
-      const numStars = Math.min(windowWidth, windowHeight) / 10; // Responsive number of stars
+      const numStars = Math.min(windowWidth, windowHeight) / 8; // عدد أكبر من النجوم
       
       const newStars: Star[] = [];
       
@@ -27,6 +29,8 @@ const AnimatedBackground: React.FC = () => {
           x: Math.random() * windowWidth,
           y: Math.random() * windowHeight,
           animationDuration: Math.random() * 4 + 2, // Random duration between 2-6s
+          animationDelay: Math.random() * 5, // تأخير عشوائي للحركة
+          opacity: Math.random() * 0.7 + 0.3, // شفافية عشوائية
         });
       }
       
@@ -55,7 +59,13 @@ const AnimatedBackground: React.FC = () => {
             height: `${star.size}px`,
             left: `${star.x}px`,
             top: `${star.y}px`,
-            animationDuration: `${star.animationDuration}s`,
+            opacity: star.opacity,
+            animationName: 'twinkle, move',
+            animationDuration: `${star.animationDuration}s, ${star.animationDuration * 2}s`,
+            animationDelay: `${star.animationDelay}s, ${star.animationDelay}s`,
+            animationIterationCount: 'infinite, infinite',
+            animationTimingFunction: 'ease-in-out, linear',
+            animationDirection: 'alternate, alternate-reverse',
           }}
         />
       ))}

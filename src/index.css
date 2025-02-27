@@ -96,6 +96,39 @@
   }
 }
 
+@keyframes twinkle {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes move {
+  0% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-10px) translateX(5px);
+  }
+  50% {
+    transform: translateY(0) translateX(10px);
+  }
+  75% {
+    transform: translateY(10px) translateX(5px);
+  }
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+}
+
 @layer components {
   .card-hover {
     @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
@@ -125,5 +158,39 @@
   .ar-text {
     font-family: 'Noto Sans Arabic', sans-serif;
     direction: rtl;
+  }
+  
+  .whatsapp-btn {
+    @apply fixed bottom-4 right-4 w-14 h-14 flex items-center justify-center rounded-full bg-green-500 text-white shadow-lg z-50 hover:scale-110 transition-all duration-300;
+    box-shadow: 0 0 15px rgba(37, 211, 102, 0.6);
+  }
+  
+  .developer-credit {
+    @apply fixed bottom-16 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-6 py-2 rounded-full font-bold shadow-lg z-50;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+    animation: pulse 2s infinite;
+  }
+  
+  .daily-reward {
+    @apply glass-card p-4 mt-4 text-center relative overflow-hidden;
+    border: 2px solid theme('colors.primary');
+  }
+  
+  .daily-reward::before {
+    content: '';
+    @apply absolute inset-0 bg-primary/10;
+    background-image: radial-gradient(circle, rgba(155, 135, 245, 0.4) 0%, transparent 70%);
+  }
+  
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+    }
   }
 }

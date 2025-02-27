@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Star, User, Award, DollarSign } from 'lucide-react';
+import { Star, User, Award, DollarSign, MessageCircle } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import AnimatedBackground from './AnimatedBackground';
 
@@ -12,6 +12,8 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, logout } = useUser();
   const location = useLocation();
+  const isLoginPage = location.pathname === '/login';
+  const isRegisterPage = location.pathname === '/register';
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-secondary/50 ar-text overflow-hidden relative">
@@ -77,6 +79,27 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <footer className="w-full py-4 text-center text-sm text-muted-foreground z-10">
         جميع الحقوق محفوظة &copy; يوما {new Date().getFullYear()}
       </footer>
+      
+      {/* لا نعرض زر الواتساب على صفحات تسجيل الدخول والتسجيل لأننا أضفناه فيهم بالفعل */}
+      {!isLoginPage && !isRegisterPage && (
+        <>
+          {/* زر واتساب للدعم */}
+          <a 
+            href="https://wa.me/01145633198" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="whatsapp-btn"
+            aria-label="تواصل معنا عبر واتساب"
+          >
+            <MessageCircle className="h-6 w-6" />
+          </a>
+          
+          {/* اسم المطور */}
+          <div className="developer-credit">
+            المطور يوسف هشام
+          </div>
+        </>
+      )}
     </div>
   );
 };

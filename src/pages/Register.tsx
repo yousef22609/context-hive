@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
-import { Star, User, Lock } from 'lucide-react';
+import { Star, User, Lock, MessageCircle } from 'lucide-react';
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -130,6 +130,22 @@ const Register: React.FC = () => {
             </p>
           </div>
         </div>
+      </div>
+      
+      {/* زر واتساب للدعم */}
+      <a 
+        href="https://wa.me/01145633198" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="whatsapp-btn"
+        aria-label="تواصل معنا عبر واتساب"
+      >
+        <MessageCircle className="h-6 w-6" />
+      </a>
+      
+      {/* اسم المطور */}
+      <div className="developer-credit">
+        المطور يوسف هشام
       </div>
     </Layout>
   );
