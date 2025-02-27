@@ -7,6 +7,7 @@ export interface User {
   username: string;
   points: number;
   cashNumber: string;
+  avatar?: string; // إضافة حقل الصورة الشخصية
 }
 
 interface UserContextType {
@@ -17,15 +18,16 @@ interface UserContextType {
   addPoints: (points: number) => void;
   exchangePoints: (points: number, cashNumber: string) => boolean;
   updateCashNumber: (cashNumber: string) => void;
+  updateAvatar: (avatar: string) => void; // إضافة دالة تحديث الصورة الشخصية
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 // Mock users data - in a real app, this would come from a database
-const mockUsers: Record<string, { username: string; password: string; points: number; cashNumber: string }> = {
-  'user1': { username: 'احمد', password: '123456', points: 2500, cashNumber: '01234567890' },
-  'user2': { username: 'محمد', password: '123456', points: 1800, cashNumber: '01098765432' },
-  'user3': { username: 'سارة', password: '123456', points: 3200, cashNumber: '01112223344' },
+const mockUsers: Record<string, { username: string; password: string; points: number; cashNumber: string; avatar?: string }> = {
+  'user1': { username: 'احمد', password: '123456', points: 2500, cashNumber: '01234567890', avatar: 'https://i.pravatar.cc/150?img=1' },
+  'user2': { username: 'محمد', password: '123456', points: 1800, cashNumber: '01098765432', avatar: 'https://i.pravatar.cc/150?img=2' },
+  'user3': { username: 'سارة', password: '123456', points: 3200, cashNumber: '01112223344', avatar: 'https://i.pravatar.cc/150?img=3' },
 };
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -62,7 +64,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         id: userId,
         username: mockUsers[userId].username,
         points: mockUsers[userId].points,
-        cashNumber: mockUsers[userId].cashNumber
+        cashNumber: mockUsers[userId].cashNumber,
+        avatar: mockUsers[userId].avatar
       });
       toast.success('تم تسجيل الدخول بنجاح');
       return true;
@@ -163,6 +166,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateAvatar = (avatar: string) => {
+    if (user) {
+      setUser({ ...user, avatar });
+      
+      // Update mock data
+      if (mockUsers[user.id]) {
+        mockUsers[user.id].avatar = avatar;
+      }
+      
+      toast.success('تم تحديث الصورة الشخصية بنجاح');
+    }
+  };
+
   return (
     <UserContext.Provider value={{ 
       user, 
@@ -171,7 +187,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       register, 
       addPoints, 
       exchangePoints,
-      updateCashNumber
+      updateCashNumber,
+      updateAvatar
     }}>
       {children}
     </UserContext.Provider>

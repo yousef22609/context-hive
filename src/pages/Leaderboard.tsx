@@ -3,20 +3,20 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
-import { Award, Trophy, Medal } from 'lucide-react';
+import { Award, Trophy, Medal, User as UserIcon } from 'lucide-react';
 
 // Mock leaderboard data
 const leaderboardData = [
-  { id: 'user1', username: 'احمد', points: 2500 },
-  { id: 'user2', username: 'محمد', points: 1800 },
-  { id: 'user3', username: 'سارة', points: 3200 },
-  { id: 'user4', username: 'علي', points: 950 },
-  { id: 'user5', username: 'فاطمة', points: 1650 },
-  { id: 'user6', username: 'خالد', points: 2100 },
-  { id: 'user7', username: 'ريم', points: 2800 },
-  { id: 'user8', username: 'عمر', points: 1400 },
-  { id: 'user9', username: 'منى', points: 1750 },
-  { id: 'user10', username: 'يوسف', points: 2200 },
+  { id: 'user1', username: 'احمد', points: 2500, avatar: 'https://i.pravatar.cc/150?img=1' },
+  { id: 'user2', username: 'محمد', points: 1800, avatar: 'https://i.pravatar.cc/150?img=2' },
+  { id: 'user3', username: 'سارة', points: 3200, avatar: 'https://i.pravatar.cc/150?img=3' },
+  { id: 'user4', username: 'علي', points: 950, avatar: 'https://i.pravatar.cc/150?img=4' },
+  { id: 'user5', username: 'فاطمة', points: 1650, avatar: 'https://i.pravatar.cc/150?img=5' },
+  { id: 'user6', username: 'خالد', points: 2100, avatar: 'https://i.pravatar.cc/150?img=6' },
+  { id: 'user7', username: 'ريم', points: 2800, avatar: 'https://i.pravatar.cc/150?img=7' },
+  { id: 'user8', username: 'عمر', points: 1400, avatar: 'https://i.pravatar.cc/150?img=8' },
+  { id: 'user9', username: 'منى', points: 1750, avatar: 'https://i.pravatar.cc/150?img=9' },
+  { id: 'user10', username: 'يوسف', points: 2200, avatar: 'https://i.pravatar.cc/150?img=10' },
 ];
 
 const Leaderboard: React.FC = () => {
@@ -56,9 +56,22 @@ const Leaderboard: React.FC = () => {
               <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center mr-3">
                 <span className="font-bold">{userRank}</span>
               </div>
-              <div>
-                <p className="font-semibold">{user.username}</p>
-                <p className="text-xs text-muted-foreground">ترتيبك الحالي</p>
+              <div className="flex items-center">
+                {user.avatar ? (
+                  <img 
+                    src={user.avatar} 
+                    alt={user.username} 
+                    className="h-8 w-8 rounded-full border-2 border-primary mr-2" 
+                  />
+                ) : (
+                  <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center mr-2">
+                    <UserIcon className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                )}
+                <div>
+                  <p className="font-semibold">{user.username}</p>
+                  <p className="text-xs text-muted-foreground">ترتيبك الحالي</p>
+                </div>
               </div>
             </div>
             <div>
@@ -76,6 +89,7 @@ const Leaderboard: React.FC = () => {
               rank={index + 1}
               username={player.username}
               points={player.points}
+              avatar={player.avatar}
               isCurrentUser={user && player.id === user.id}
             />
           ))}
@@ -101,7 +115,18 @@ const Leaderboard: React.FC = () => {
                   <div className="col-span-2 text-center font-medium">
                     {index + 4}
                   </div>
-                  <div className="col-span-7">
+                  <div className="col-span-7 flex items-center">
+                    {player.avatar ? (
+                      <img 
+                        src={player.avatar} 
+                        alt={player.username} 
+                        className="h-6 w-6 rounded-full mr-2" 
+                      />
+                    ) : (
+                      <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center mr-2">
+                        <UserIcon className="h-3 w-3 text-muted-foreground" />
+                      </div>
+                    )}
                     <span className="font-medium">{player.username}</span>
                     {player.id === user?.id && (
                       <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded mr-2">
@@ -126,10 +151,11 @@ interface TopPlayerCardProps {
   rank: number;
   username: string;
   points: number;
+  avatar?: string;
   isCurrentUser: boolean;
 }
 
-const TopPlayerCard: React.FC<TopPlayerCardProps> = ({ rank, username, points, isCurrentUser }) => {
+const TopPlayerCard: React.FC<TopPlayerCardProps> = ({ rank, username, points, avatar, isCurrentUser }) => {
   const renderIcon = () => {
     switch (rank) {
       case 1:
@@ -165,6 +191,15 @@ const TopPlayerCard: React.FC<TopPlayerCardProps> = ({ rank, username, points, i
         </div>
       </div>
       <div className="p-4 text-center">
+        {avatar ? (
+          <div className="flex justify-center mb-2">
+            <img 
+              src={avatar} 
+              alt={username} 
+              className="h-12 w-12 rounded-full border-2 border-primary" 
+            />
+          </div>
+        ) : null}
         <p className="font-bold truncate mb-1">
           {username}
           {isCurrentUser && ' (أنت)'}

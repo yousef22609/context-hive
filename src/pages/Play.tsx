@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
@@ -9,6 +9,12 @@ import { Check, X, Timer, Star } from 'lucide-react';
 const Play: React.FC = () => {
   const { user, addPoints } = useUser();
   const navigate = useNavigate();
+  
+  // اختيار 10 أسئلة عشوائية من مجموعة الأسئلة المتاحة
+  const randomQuestions = useMemo(() => {
+    const shuffled = [...quizQuestions].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 10);
+  }, []);
   
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -46,7 +52,7 @@ const Play: React.FC = () => {
   const handleTimeout = useCallback(() => {
     setIsCorrect(false);
     setTimeout(() => {
-      if (currentQuestionIndex < quizQuestions.length - 1) {
+      if (currentQuestionIndex < randomQuestions.length - 1) {
         setCurrentQuestionIndex(prev => prev + 1);
         setSelectedOption(null);
         setIsCorrect(null);
@@ -55,13 +61,13 @@ const Play: React.FC = () => {
         finishGame();
       }
     }, 1500);
-  }, [currentQuestionIndex]);
+  }, [currentQuestionIndex, randomQuestions.length]);
   
   const handleOptionSelect = useCallback((option: string) => {
     if (selectedOption || isCorrect !== null) return;
     
     setSelectedOption(option);
-    const currentQuestion = quizQuestions[currentQuestionIndex];
+    const currentQuestion = randomQuestions[currentQuestionIndex];
     const correct = option === currentQuestion.correctAnswer;
     
     setIsCorrect(correct);
@@ -71,7 +77,7 @@ const Play: React.FC = () => {
     }
     
     setTimeout(() => {
-      if (currentQuestionIndex < quizQuestions.length - 1) {
+      if (currentQuestionIndex < randomQuestions.length - 1) {
         setCurrentQuestionIndex(prev => prev + 1);
         setSelectedOption(null);
         setIsCorrect(null);
@@ -80,7 +86,7 @@ const Play: React.FC = () => {
         finishGame();
       }
     }, 1500);
-  }, [currentQuestionIndex, selectedOption, isCorrect]);
+  }, [currentQuestionIndex, selectedOption, isCorrect, randomQuestions]);
   
   const finishGame = useCallback(() => {
     setGameOver(true);
@@ -88,13 +94,8 @@ const Play: React.FC = () => {
   }, [score, addPoints]);
   
   const restartGame = useCallback(() => {
-    setCurrentQuestionIndex(0);
-    setSelectedOption(null);
-    setIsCorrect(null);
-    setScore(0);
-    setTimeLeft(60);
-    setGameOver(false);
-    setAnsweredQuestions([]);
+    // تحديث الصفحة لجلب أسئلة جديدة عشوائية
+    window.location.reload();
   }, []);
   
   if (!user) return null;
@@ -115,7 +116,7 @@ const Play: React.FC = () => {
             
             <h1 className="text-2xl font-bold mb-2">انتهت اللعبة!</h1>
             <p className="text-lg mb-6">
-              لقد أجبت على {score} من أصل {quizQuestions.length} أسئلة بشكل صحيح
+              لقد أجبت على {score} من أصل {randomQuestions.length} أسئلة بشكل صحيح
             </p>
             
             <div className="bg-muted/30 rounded-lg p-4 mb-6">
@@ -139,8 +140,8 @@ const Play: React.FC = () => {
     );
   }
   
-  const currentQuestion = quizQuestions[currentQuestionIndex];
-  const progress = (currentQuestionIndex / quizQuestions.length) * 100;
+  const currentQuestion = randomQuestions[currentQuestionIndex];
+  const progress = (currentQuestionIndex / randomQuestions.length) * 100;
   
   return (
     <Layout>
@@ -148,7 +149,7 @@ const Play: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
           <div>
             <p className="text-sm text-muted-foreground">السؤال</p>
-            <p className="font-bold text-lg">{currentQuestionIndex + 1} من {quizQuestions.length}</p>
+            <p className="font-bold text-lg">{currentQuestionIndex + 1} من {randomQuestions.length}</p>
           </div>
           <div className="flex items-center bg-muted/30 px-3 py-1 rounded-full">
             <Timer className="h-4 w-4 mr-1 text-primary" />

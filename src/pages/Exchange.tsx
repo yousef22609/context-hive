@@ -3,16 +3,17 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
-import { DollarSign, Phone, User, Award } from 'lucide-react';
+import { DollarSign, Phone, User, Award, Upload } from 'lucide-react';
 
 const Exchange: React.FC = () => {
-  const { user, exchangePoints, updateCashNumber } = useUser();
+  const { user, exchangePoints, updateCashNumber, updateAvatar } = useUser();
   const navigate = useNavigate();
   
   const [points, setPoints] = useState(1000);
   const [cashNumber, setCashNumber] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [tab, setTab] = useState<'exchange' | 'profile'>('exchange');
+  const [avatar, setAvatar] = useState<string>('');
   
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -20,6 +21,7 @@ const Exchange: React.FC = () => {
       navigate('/login');
     } else {
       setCashNumber(user.cashNumber || '');
+      setAvatar(user.avatar || '');
     }
   }, [user, navigate]);
   
@@ -41,8 +43,26 @@ const Exchange: React.FC = () => {
     // Simulate network delay
     setTimeout(() => {
       updateCashNumber(cashNumber);
+      if (avatar) {
+        updateAvatar(avatar);
+      }
       setIsProcessing(false);
     }, 500);
+  };
+  
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // تحويل الصورة إلى صيغة base64
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      // تحديث الصورة في الحالة
+      if (typeof reader.result === 'string') {
+        setAvatar(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
   };
   
   const cashAmount = (points / 1000) * 100;
@@ -175,8 +195,28 @@ const Exchange: React.FC = () => {
             ) : (
               <div className="animate-fade-in">
                 <div className="flex justify-center mb-6">
-                  <div className="h-20 w-20 rounded-full bg-primary/20 flex items-center justify-center">
-                    <User className="h-10 w-10 text-primary" />
+                  <div className="relative group">
+                    <div className="h-24 w-24 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden">
+                      {avatar ? (
+                        <img 
+                          src={avatar} 
+                          alt={user.username} 
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <User className="h-12 w-12 text-primary" />
+                      )}
+                    </div>
+                    <label htmlFor="avatar-upload" className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity duration-200">
+                      <Upload className="h-8 w-8 text-white" />
+                    </label>
+                    <input 
+                      type="file" 
+                      id="avatar-upload" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={handleAvatarChange}
+                    />
                   </div>
                 </div>
                 

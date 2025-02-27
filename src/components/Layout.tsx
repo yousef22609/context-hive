@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Star, User, Award, DollarSign, MessageCircle } from 'lucide-react';
+import { Star, User, Award, DollarSign, MessageCircle, Moon, Sun } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import AnimatedBackground from './AnimatedBackground';
 
@@ -15,9 +15,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const isLoginPage = location.pathname === '/login';
   const isRegisterPage = location.pathname === '/register';
 
+  // تفعيل الوضع الداكن افتراضيًا
+  React.useEffect(() => {
+    document.documentElement.classList.add('dark');
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-secondary/50 ar-text overflow-hidden relative">
       <AnimatedBackground />
+      
+      {/* اسم المطور في الأعلى */}
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-1 text-center font-bold text-sm shadow-lg sticky top-0 z-50">
+        المطور يوسف هشام
+      </div>
       
       <header className="w-full py-4 px-6 glass-card z-10 mb-4 flex justify-between items-center">
         <Link to="/" className="flex items-center gap-2">
@@ -27,9 +37,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         
         {user ? (
           <div className="flex items-center gap-4">
-            <span className="text-sm md:text-base hidden md:inline-block">
-              مرحباً، <span className="font-bold">{user.username}</span>
-            </span>
+            <div className="flex items-center">
+              {user.avatar ? (
+                <img 
+                  src={user.avatar} 
+                  alt={user.username} 
+                  className="h-8 w-8 rounded-full border-2 border-primary mr-2"
+                />
+              ) : (
+                <User className="h-6 w-6 text-muted-foreground mr-1" />
+              )}
+              <span className="text-sm md:text-base hidden md:inline-block">
+                مرحباً، <span className="font-bold">{user.username}</span>
+              </span>
+            </div>
             <span className="text-sm font-medium bg-primary/20 px-3 py-1 rounded-full">
               {user.points} نقطة
             </span>
