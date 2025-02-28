@@ -1,13 +1,15 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { QuizCategory } from '../data/quizData';
 
 export interface User {
   id: string;
   username: string;
   points: number;
   cashNumber: string;
-  avatar?: string; // إضافة حقل الصورة الشخصية
+  avatar?: string;
+  lastPlayedQuiz?: Record<string, string>; // القائمة وتاريخ آخر لعب
 }
 
 interface UserContextType {
@@ -18,13 +20,16 @@ interface UserContextType {
   addPoints: (points: number) => void;
   exchangePoints: (points: number, cashNumber: string) => boolean;
   updateCashNumber: (cashNumber: string) => void;
-  updateAvatar: (avatar: string) => void; // إضافة دالة تحديث الصورة الشخصية
+  updateAvatar: (avatar: string) => void;
+  canPlayQuizCategory: (categoryId: string) => boolean;
+  updateLastPlayedQuiz: (categoryId: string) => void;
+  getTimeRemaining: (categoryId: string) => string;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 // Mock users data - in a real app, this would come from a database
-const mockUsers: Record<string, { username: string; password: string; points: number; cashNumber: string; avatar?: string }> = {
+const mockUsers: Record<string, { username: string; password: string; points: number; cashNumber: string; avatar?: string; lastPlayedQuiz?: Record<string, string> }> = {
   'user1': { username: 'احمد', password: '123456', points: 2500, cashNumber: '01234567890', avatar: 'https://i.pravatar.cc/150?img=1' },
   'user2': { username: 'محمد', password: '123456', points: 1800, cashNumber: '01098765432', avatar: 'https://i.pravatar.cc/150?img=2' },
   'user3': { username: 'سارة', password: '123456', points: 3200, cashNumber: '01112223344', avatar: 'https://i.pravatar.cc/150?img=3' },
@@ -55,6 +60,61 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user]);
 
+  // تحقق إذا كان يمكن للمستخدم لعب فئة معينة بناءً على وقت الانتظار
+  const canPlayQuizCategory = (categoryId: string) => {
+    if (!user || !user.lastPlayedQuiz || !user.lastPlayedQuiz[categoryId]) {
+      return true;
+    }
+
+    const lastPlayed = new Date(user.lastPlayedQuiz[categoryId]);
+    const now = new Date();
+    const hoursDiff = (now.getTime() - lastPlayed.getTime()) / (1000 * 60 * 60);
+    
+    // التحقق من مرور 24 ساعة
+    return hoursDiff >= 24;
+  };
+
+  // تحديث وقت آخر لعب للفئة
+  const updateLastPlayedQuiz = (categoryId: string) => {
+    if (user) {
+      const updatedUser = {
+        ...user,
+        lastPlayedQuiz: {
+          ...user.lastPlayedQuiz,
+          [categoryId]: new Date().toISOString()
+        }
+      };
+      
+      setUser(updatedUser);
+      
+      // تحديث في mockUsers أيضًا
+      if (mockUsers[user.id]) {
+        mockUsers[user.id].lastPlayedQuiz = {
+          ...mockUsers[user.id].lastPlayedQuiz,
+          [categoryId]: new Date().toISOString()
+        };
+      }
+    }
+  };
+
+  // حساب الوقت المتبقي لإعادة اللعب
+  const getTimeRemaining = (categoryId: string) => {
+    if (!user || !user.lastPlayedQuiz || !user.lastPlayedQuiz[categoryId]) {
+      return "متاح الآن";
+    }
+
+    const lastPlayed = new Date(user.lastPlayedQuiz[categoryId]);
+    const now = new Date();
+    const hoursDiff = (now.getTime() - lastPlayed.getTime()) / (1000 * 60 * 60);
+    
+    if (hoursDiff >= 24) {
+      return "متاح الآن";
+    }
+    
+    const hoursRemaining = Math.ceil(24 - hoursDiff);
+    return `متاح بعد ${hoursRemaining} ساعة`;
+  };
+
   const login = (username: string, password: string) => {
     // Find user by username
     const userId = Object.keys(mockUsers).find(id => mockUsers[id].username === username);
@@ -65,7 +125,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         username: mockUsers[userId].username,
         points: mockUsers[userId].points,
         cashNumber: mockUsers[userId].cashNumber,
-        avatar: mockUsers[userId].avatar
+        avatar: mockUsers[userId].avatar,
+        lastPlayedQuiz: mockUsers[userId].lastPlayedQuiz || {}
       });
       toast.success('تم تسجيل الدخول بنجاح');
       return true;
@@ -100,7 +161,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       id: newUserId,
       username,
       points: 0,
-      cashNumber: ''
+      cashNumber: '',
+      lastPlayedQuiz: {}
     });
     
     toast.success('تم إنشاء الحساب وتسجيل الدخول بنجاح');
@@ -188,7 +250,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       addPoints, 
       exchangePoints,
       updateCashNumber,
-      updateAvatar
+      updateAvatar,
+      canPlayQuizCategory,
+      updateLastPlayedQuiz,
+      getTimeRemaining
     }}>
       {children}
     </UserContext.Provider>

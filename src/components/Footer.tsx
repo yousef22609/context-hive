@@ -41,13 +41,13 @@ const Footer: React.FC = () => {
             <div className="col-span-2 md:col-span-1 mt-4 md:mt-0">
               <h3 className="mb-3 font-bold">تواصل معنا</h3>
               <a 
-                href="https://wa.me/01145633198" 
+                href="https://wa.me/01007570190" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-muted-foreground hover:text-green-500"
               >
                 <MessageCircle className="h-4 w-4" />
-                <span>01145633198</span>
+                <span>01007570190</span>
               </a>
             </div>
           </div>
@@ -58,14 +58,14 @@ const Footer: React.FC = () => {
             جميع الحقوق محفوظة &copy; يوما {new Date().getFullYear()}
           </p>
           <div className="mt-4 md:mt-0">
-            <span className="text-primary font-bold">المطور: يوسف هشام</span>
+            <span className="text-primary font-bold">المطور: يوسف هشام شعبان</span>
           </div>
         </div>
       </div>
       
       {/* زر واتساب للدعم */}
       <a 
-        href="https://wa.me/01145633198" 
+        href="https://wa.me/01007570190" 
         target="_blank" 
         rel="noopener noreferrer"
         className="whatsapp-btn"
@@ -76,7 +76,7 @@ const Footer: React.FC = () => {
       
       {/* اسم المطور */}
       <div className="developer-credit">
-        المطور يوسف هشام
+        المطور يوسف هشام شعبان
       </div>
     </footer>
   );

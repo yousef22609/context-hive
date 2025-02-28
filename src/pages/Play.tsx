@@ -3,19 +3,25 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
-import { quizQuestions } from '../data/quizData';
-import { Check, X, Timer, Star } from 'lucide-react';
+import { quizCategories } from '../data/quizData';
+import { Check, X, Timer, Star, Clock, Brain, Laugh, Globe, Gamepad2 } from 'lucide-react';
+import { toast } from 'sonner';
+
+const iconMap: Record<string, React.ReactNode> = {
+  'funny': <Laugh className="h-6 w-6" />,
+  'iq': <Brain className="h-6 w-6" />,
+  'general': <Globe className="h-6 w-6" />,
+  'cartoon': <Gamepad2 className="h-6 w-6" />
+};
 
 const Play: React.FC = () => {
-  const { user, addPoints } = useUser();
+  const { user, addPoints, canPlayQuizCategory, updateLastPlayedQuiz, getTimeRemaining } = useUser();
   const navigate = useNavigate();
   
-  // اختيار 10 أسئلة عشوائية من مجموعة الأسئلة المتاحة
-  const randomQuestions = useMemo(() => {
-    const shuffled = [...quizQuestions].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 10);
-  }, []);
+  // حالة اختيار الفئة
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
+  // حالات صفحة اللعب
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -24,6 +30,17 @@ const Play: React.FC = () => {
   const [gameOver, setGameOver] = useState(false);
   const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
   
+  // اختيار أسئلة عشوائية من الفئة المختارة
+  const randomQuestions = useMemo(() => {
+    if (!selectedCategory) return [];
+    
+    const category = quizCategories.find(cat => cat.id === selectedCategory);
+    if (!category) return [];
+    
+    const shuffled = [...category.questions].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 10);
+  }, [selectedCategory]);
+  
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!user) {
@@ -31,9 +48,9 @@ const Play: React.FC = () => {
     }
   }, [user, navigate]);
   
-  // Timer countdown
+  // Timer countdown during game
   useEffect(() => {
-    if (gameOver || isCorrect !== null) return;
+    if (!selectedCategory || gameOver || isCorrect !== null || randomQuestions.length === 0) return;
     
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -47,7 +64,23 @@ const Play: React.FC = () => {
     }, 1000);
     
     return () => clearInterval(timer);
-  }, [currentQuestionIndex, isCorrect, gameOver]);
+  }, [currentQuestionIndex, isCorrect, gameOver, selectedCategory, randomQuestions.length]);
+  
+  const handleCategorySelect = (categoryId: string) => {
+    if (!canPlayQuizCategory(categoryId)) {
+      toast.error(`لا يمكنك لعب هذه الفئة الآن. ${getTimeRemaining(categoryId)}`);
+      return;
+    }
+    
+    setSelectedCategory(categoryId);
+    setCurrentQuestionIndex(0);
+    setSelectedOption(null);
+    setIsCorrect(null);
+    setScore(0);
+    setTimeLeft(60);
+    setGameOver(false);
+    setAnsweredQuestions([]);
+  };
   
   const handleTimeout = useCallback(() => {
     setIsCorrect(false);
@@ -91,14 +124,66 @@ const Play: React.FC = () => {
   const finishGame = useCallback(() => {
     setGameOver(true);
     addPoints(score);
-  }, [score, addPoints]);
+    
+    // تحديث وقت آخر لعبة للفئة
+    if (selectedCategory) {
+      updateLastPlayedQuiz(selectedCategory);
+    }
+  }, [score, addPoints, selectedCategory, updateLastPlayedQuiz]);
   
   const restartGame = useCallback(() => {
-    // تحديث الصفحة لجلب أسئلة جديدة عشوائية
-    window.location.reload();
+    setSelectedCategory(null);
+    setCurrentQuestionIndex(0);
+    setSelectedOption(null);
+    setIsCorrect(null);
+    setScore(0);
+    setTimeLeft(60);
+    setGameOver(false);
+    setAnsweredQuestions([]);
   }, []);
   
   if (!user) return null;
+  
+  // إذا لم يتم اختيار فئة بعد، اعرض قائمة الفئات
+  if (!selectedCategory) {
+    return (
+      <Layout>
+        <div className="glass-card p-6 max-w-4xl mx-auto animate-fade-in">
+          <h1 className="text-2xl font-bold text-center mb-8">اختر فئة الأسئلة</h1>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            {quizCategories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => handleCategorySelect(category.id)}
+                disabled={!canPlayQuizCategory(category.id)}
+                className={`p-4 rounded-lg border-2 transition-all flex flex-col h-48 relative overflow-hidden
+                  ${canPlayQuizCategory(category.id) 
+                    ? 'border-primary hover:bg-primary/10 hover:border-primary/80' 
+                    : 'border-muted cursor-not-allowed opacity-70'}`}
+              >
+                <div className="text-3xl mb-2">{category.icon}</div>
+                <h3 className="text-xl font-bold mb-2">{category.name}</h3>
+                <p className="text-sm text-muted-foreground mb-4">{category.description}</p>
+                
+                {!canPlayQuizCategory(category.id) && (
+                  <div className="absolute bottom-0 right-0 left-0 bg-muted/80 backdrop-blur-sm p-2 flex items-center justify-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    <span className="text-sm font-medium">{getTimeRemaining(category.id)}</span>
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+          
+          <div className="text-center text-sm text-muted-foreground">
+            <p>كل مجموعة أسئلة تحتوي على 15 سؤال، وكل سؤال صحيح يمنحك نقطة واحدة.</p>
+            <p>يمكنك اللعب في كل فئة مرة واحدة كل 24 ساعة.</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
   
   if (gameOver) {
     return (
@@ -128,7 +213,7 @@ const Play: React.FC = () => {
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button onClick={restartGame} className="btn-primary">
-                لعب مرة أخرى
+                اختيار فئة أخرى
               </button>
               <button onClick={() => navigate('/')} className="btn-outline">
                 العودة للصفحة الرئيسية
@@ -171,11 +256,11 @@ const Play: React.FC = () => {
         
         <div className="mb-8 py-3">
           <h2 className="text-xl font-bold mb-6 text-center">
-            {currentQuestion.question}
+            {currentQuestion?.question}
           </h2>
           
           <div className="space-y-3">
-            {currentQuestion.options.map((option) => (
+            {currentQuestion?.options.map((option) => (
               <button
                 key={option}
                 onClick={() => handleOptionSelect(option)}

@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Star, User, Award, DollarSign, MessageCircle, Moon, Sun } from 'lucide-react';
+import { Star, User, Award, DollarSign, MessageCircle, Info } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import AnimatedBackground from './AnimatedBackground';
 import Footer from './Footer';
+import DeveloperInfoDialog from './DeveloperInfoDialog';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,6 +16,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const isLoginPage = location.pathname === '/login';
   const isRegisterPage = location.pathname === '/register';
+  const [developerInfoOpen, setDeveloperInfoOpen] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-secondary/50 ar-text overflow-hidden relative">
@@ -51,6 +53,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               {user.points} نقطة
             </span>
             <button 
+              onClick={() => setDeveloperInfoOpen(true)}
+              className="btn-outline text-sm flex items-center gap-1"
+              aria-label="معلومات المطور"
+            >
+              <Info className="h-4 w-4" />
+              <span>معلومات المطور</span>
+            </button>
+            <button 
               onClick={logout}
               className="btn-outline text-sm"
             >
@@ -58,9 +68,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </button>
           </div>
         ) : (
-          <Link to="/login" className="btn-primary">
-            تسجيل الدخول
-          </Link>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setDeveloperInfoOpen(true)}
+              className="btn-outline text-sm flex items-center gap-1"
+              aria-label="معلومات المطور"
+            >
+              <Info className="h-4 w-4" />
+              <span>معلومات المطور</span>
+            </button>
+            <Link to="/login" className="btn-primary">
+              تسجيل الدخول
+            </Link>
+          </div>
         )}
       </header>
 
@@ -100,7 +120,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <>
           {/* زر واتساب للدعم */}
           <a 
-            href="https://wa.me/01145633198" 
+            href="https://wa.me/01007570190" 
             target="_blank" 
             rel="noopener noreferrer"
             className="whatsapp-btn"
@@ -111,10 +131,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           
           {/* اسم المطور */}
           <div className="developer-credit">
-            المطور يوسف هشام
+            المطور يوسف هشام شعبان
           </div>
         </>
       )}
+      
+      {/* مودال معلومات المطور */}
+      <DeveloperInfoDialog 
+        open={developerInfoOpen} 
+        onOpenChange={setDeveloperInfoOpen} 
+      />
     </div>
   );
 };
