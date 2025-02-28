@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
 import { quizCategories } from '../data/quizData';
-import { Check, X, Timer, Star, Clock, Brain, Laugh, Globe, Gamepad2, Moon, Lantern } from 'lucide-react';
+import { Check, X, Timer, Star, Clock, Brain, Laugh, Globe, Gamepad2, Moon } from 'lucide-react';
 import { toast } from 'sonner';
 import PromotionMessage from '../components/PromotionMessage';
 
@@ -14,7 +13,7 @@ const iconMap: Record<string, React.ReactNode> = {
   'iq': <Brain className="h-6 w-6" />,
   'general': <Globe className="h-6 w-6" />,
   'cartoon': <Gamepad2 className="h-6 w-6" />,
-  'ramadan': <Lantern className="h-6 w-6 text-amber-500" />
+  'ramadan': <Moon className="h-6 w-6 text-amber-500" />
 };
 
 const Play: React.FC = () => {
@@ -279,7 +278,7 @@ const Play: React.FC = () => {
         <div className="glass-card p-6 max-w-2xl mx-auto animate-fade-in">
           {selectedCategory === 'ramadan' && (
             <div className="flex justify-center mb-4">
-              <Lantern className="h-10 w-10 text-amber-400 animate-pulse" />
+              <Moon className="h-10 w-10 text-amber-400 animate-pulse" />
             </div>
           )}
           
@@ -361,9 +360,9 @@ const Play: React.FC = () => {
         {selectedCategory === 'ramadan' && (
           <div className="fixed bottom-4 right-4 left-4 flex justify-center pointer-events-none">
             <div className="flex items-center space-x-4 rtl:space-x-reverse opacity-50">
-              <Lantern className="h-6 w-6 text-amber-400" />
+              <Moon className="h-6 w-6 text-amber-400" />
               <Moon className="h-5 w-5 text-amber-200" />
-              <Lantern className="h-6 w-6 text-amber-400" />
+              <Moon className="h-6 w-6 text-amber-400" />
             </div>
           </div>
         )}
