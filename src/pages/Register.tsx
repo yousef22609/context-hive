@@ -29,8 +29,6 @@ const Register: React.FC = () => {
     setTimeout(() => {
       const success = register(username, password);
       
-      // Note: The WhatsApp notification is now handled in the UserContext
-      
       if (success) {
         navigate('/');
       }

@@ -1,11 +1,10 @@
-
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Star, User, Award, DollarSign, MessageCircle, Info } from 'lucide-react';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { LogOut, Star } from 'lucide-react';
 import AnimatedBackground from './AnimatedBackground';
-import Footer from './Footer';
 import DeveloperInfoDialog from './DeveloperInfoDialog';
+import PromotionMessage from './PromotionMessage';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,158 +12,73 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, logout } = useUser();
-  const location = useLocation();
-  const isLoginPage = location.pathname === '/login';
-  const isRegisterPage = location.pathname === '/register';
-  const [developerInfoOpen, setDeveloperInfoOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-secondary/50 ar-text overflow-hidden relative">
+    <div className="flex flex-col min-h-screen" dir="rtl">
       <AnimatedBackground />
-      
-      {/* اسم المطور في الأعلى */}
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-1 text-center font-bold text-sm shadow-lg sticky top-0 z-50">
-        المطور يوسف هشام
-      </div>
-      
-      <header className="w-full py-4 px-6 glass-card z-10 mb-4 flex justify-between items-center">
-        <Link to="/" className="flex items-center gap-2">
-          <Star className="h-8 w-8 text-primary animate-star-glow" />
-          <span className="text-2xl font-bold">يوما</span>
-        </Link>
-        
-        {user ? (
-          <div className="flex items-center gap-4">
-            <div className="flex items-center">
-              {user.avatar ? (
-                <img 
-                  src={user.avatar} 
-                  alt={user.username} 
-                  className="h-8 w-8 rounded-full border-2 border-primary mr-2"
-                />
+      <header className="py-4 px-6 z-10 relative">
+        <div className="mx-auto max-w-7xl flex justify-between items-center">
+          <Link to="/" className="flex items-center">
+            <Star className="h-6 w-6 text-primary animate-star-glow mr-2" />
+            <h1 className="text-xl font-bold">يوما كويز</h1>
+          </Link>
+          
+          <nav>
+            <ul className="flex items-center space-x-4 space-x-reverse rtl:space-x-reverse">
+              {user ? (
+                <>
+                  <li>
+                    <Link to="/play" className="link-hover">العب</Link>
+                  </li>
+                  <li>
+                    <Link to="/leaderboard" className="link-hover">المتصدرين</Link>
+                  </li>
+                  <li>
+                    <Link to="/exchange" className="link-hover">استبدال</Link>
+                  </li>
+                  <li className="mr-2">
+                    <button 
+                      onClick={handleLogout}
+                      className="link-hover text-red-500"
+                    >
+                      <LogOut className="h-4 w-4 inline-block ml-1" />
+                      خروج
+                    </button>
+                  </li>
+                </>
               ) : (
-                <User className="h-6 w-6 text-muted-foreground mr-1" />
+                <>
+                  <li>
+                    <Link to="/login" className="btn-secondary">تسجيل الدخول</Link>
+                  </li>
+                  <li>
+                    <Link to="/register" className="btn-primary">إنشاء حساب</Link>
+                  </li>
+                </>
               )}
-              <span className="text-sm md:text-base hidden md:inline-block">
-                مرحباً، <span className="font-bold">{user.username}</span>
-              </span>
-            </div>
-            <span className="text-sm font-medium bg-primary/20 px-3 py-1 rounded-full">
-              {user.points} نقطة
-            </span>
-            <button 
-              onClick={() => setDeveloperInfoOpen(true)}
-              className="btn-outline text-sm flex items-center gap-1"
-              aria-label="معلومات المطور"
-            >
-              <Info className="h-4 w-4" />
-              <span>معلومات المطور</span>
-            </button>
-            <button 
-              onClick={logout}
-              className="btn-outline text-sm"
-            >
-              تسجيل الخروج
-            </button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => setDeveloperInfoOpen(true)}
-              className="btn-outline text-sm flex items-center gap-1"
-              aria-label="معلومات المطور"
-            >
-              <Info className="h-4 w-4" />
-              <span>معلومات المطور</span>
-            </button>
-            <Link to="/login" className="btn-primary">
-              تسجيل الدخول
-            </Link>
-          </div>
-        )}
+            </ul>
+          </nav>
+        </div>
       </header>
-
-      {user && (
-        <nav className="w-full max-w-4xl mx-auto mb-6 px-4">
-          <div className="grid grid-cols-3 gap-2 md:gap-4">
-            <NavItem 
-              to="/play" 
-              icon={<Star className="h-5 w-5" />} 
-              label="العب" 
-              active={location.pathname === '/play'} 
-            />
-            <NavItem 
-              to="/leaderboard" 
-              icon={<Award className="h-5 w-5" />} 
-              label="التصنيف" 
-              active={location.pathname === '/leaderboard'} 
-            />
-            <NavItem 
-              to="/exchange" 
-              icon={<DollarSign className="h-5 w-5" />} 
-              label="استبدال النقاط" 
-              active={location.pathname === '/exchange'} 
-            />
-          </div>
-        </nav>
-      )}
-
-      <main className="flex-1 w-full">
+      
+      <main className="flex-1 p-6 z-0 relative">
+        <PromotionMessage />
         {children}
       </main>
       
-      <Footer />
-      
-      {/* لا نعرض زر الواتساب على صفحات تسجيل الدخول والتسجيل لأننا أضفناه فيهم بالفعل */}
-      {!isLoginPage && !isRegisterPage && (
-        <>
-          {/* زر واتساب للدعم */}
-          <a 
-            href="https://wa.me/01007570190" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="whatsapp-btn"
-            aria-label="تواصل معنا عبر واتساب"
-          >
-            <MessageCircle className="h-6 w-6" />
-          </a>
-          
-          {/* اسم المطور */}
-          <div className="developer-credit">
-            المطور يوسف هشام شعبان
-          </div>
-        </>
-      )}
-      
-      {/* مودال معلومات المطور */}
-      <DeveloperInfoDialog 
-        open={developerInfoOpen} 
-        onOpenChange={setDeveloperInfoOpen} 
-      />
+      <footer className="p-6 text-center text-sm text-muted-foreground z-10 relative">
+        <p>جميع الحقوق محفوظة لمنصة يوما كويز © {new Date().getFullYear()}</p>
+        <div className="mt-2">
+          <DeveloperInfoDialog />
+        </div>
+      </footer>
     </div>
-  );
-};
-
-interface NavItemProps {
-  to: string;
-  icon: React.ReactNode;
-  label: string;
-  active: boolean;
-}
-
-const NavItem: React.FC<NavItemProps> = ({ to, icon, label, active }) => {
-  return (
-    <Link 
-      to={to} 
-      className={`flex flex-col items-center justify-center p-3 rounded-lg transition-all duration-300 ${
-        active 
-          ? 'bg-primary text-primary-foreground shadow-md' 
-          : 'bg-card hover:bg-accent'
-      }`}
-    >
-      {icon}
-      <span className="mt-1 text-sm font-medium">{label}</span>
-    </Link>
   );
 };
 

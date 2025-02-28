@@ -10,6 +10,7 @@ export interface User {
   cashNumber: string;
   avatar?: string;
   lastPlayedQuiz?: Record<string, string>; // القائمة وتاريخ آخر لعب
+  showPromotion?: boolean;
 }
 
 interface UserContextType {
@@ -24,16 +25,23 @@ interface UserContextType {
   canPlayQuizCategory: (categoryId: string) => boolean;
   updateLastPlayedQuiz: (categoryId: string) => void;
   getTimeRemaining: (categoryId: string) => string;
+  hidePromotion: () => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 // Mock users data - in a real app, this would come from a database
-const mockUsers: Record<string, { username: string; password: string; points: number; cashNumber: string; avatar?: string; lastPlayedQuiz?: Record<string, string> }> = {
-  'user1': { username: 'يوسف هشام', password: '123456', points: 100, cashNumber: '01007570190', avatar: 'https://i.pravatar.cc/150?img=11' },
-  'user2': { username: 'احمد', password: '123456', points: 25, cashNumber: '01234567890', avatar: 'https://i.pravatar.cc/150?img=1' },
-  'user3': { username: 'محمد', password: '123456', points: 18, cashNumber: '01098765432', avatar: 'https://i.pravatar.cc/150?img=2' },
-  'user4': { username: 'سارة', password: '123456', points: 32, cashNumber: '01112223344', avatar: 'https://i.pravatar.cc/150?img=3' },
+const mockUsers: Record<string, { username: string; password: string; points: number; cashNumber: string; avatar?: string; lastPlayedQuiz?: Record<string, string>; showPromotion?: boolean }> = {
+  'user1': { username: 'يوسف هشام', password: '123456', points: 100, cashNumber: '01007570190', avatar: 'https://i.pravatar.cc/150?img=11', showPromotion: true },
+  'user2': { username: 'احمد', password: '123456', points: 25, cashNumber: '01234567890', avatar: 'https://i.pravatar.cc/150?img=1', showPromotion: true },
+  'user3': { username: 'محمد', password: '123456', points: 18, cashNumber: '01098765432', avatar: 'https://i.pravatar.cc/150?img=2', showPromotion: true },
+  'user4': { username: 'سارة', password: '123456', points: 32, cashNumber: '01112223344', avatar: 'https://i.pravatar.cc/150?img=3', showPromotion: true },
+  'user5': { username: 'فاطمة', password: '123456', points: 47, cashNumber: '01098765432', avatar: 'https://i.pravatar.cc/150?img=4', showPromotion: true },
+  'user6': { username: 'عمر', password: '123456', points: 55, cashNumber: '01112223344', avatar: 'https://i.pravatar.cc/150?img=5', showPromotion: true },
+  'user7': { username: 'خالد', password: '123456', points: 29, cashNumber: '01098765432', avatar: 'https://i.pravatar.cc/150?img=6', showPromotion: true },
+  'user8': { username: 'ليلى', password: '123456', points: 37, cashNumber: '01112223344', avatar: 'https://i.pravatar.cc/150?img=7', showPromotion: true },
+  'user9': { username: 'حسن', password: '123456', points: 62, cashNumber: '01098765432', avatar: 'https://i.pravatar.cc/150?img=8', showPromotion: true },
+  'user10': { username: 'نور', password: '123456', points: 41, cashNumber: '01112223344', avatar: 'https://i.pravatar.cc/150?img=9', showPromotion: true },
 };
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -127,7 +135,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         points: mockUsers[userId].points,
         cashNumber: mockUsers[userId].cashNumber,
         avatar: mockUsers[userId].avatar,
-        lastPlayedQuiz: mockUsers[userId].lastPlayedQuiz || {}
+        lastPlayedQuiz: mockUsers[userId].lastPlayedQuiz || {},
+        showPromotion: mockUsers[userId].showPromotion
       });
       toast.success('تم تسجيل الدخول بنجاح');
       return true;
@@ -154,7 +163,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       username,
       password,
       points: 0,
-      cashNumber: ''
+      cashNumber: '',
+      showPromotion: true
     };
     
     // Log in with new user
@@ -163,20 +173,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       username,
       points: 0,
       cashNumber: '',
-      lastPlayedQuiz: {}
+      lastPlayedQuiz: {},
+      showPromotion: true
     });
-    
-    // Send WhatsApp notification to developer
-    try {
-      // Using the WhatsApp API to open a chat - in production, use a proper API service
-      const whatsappMessage = `مستخدم جديد تم تسجيله: ${username}`;
-      const whatsappUrl = `https://wa.me/01007570190?text=${encodeURIComponent(whatsappMessage)}`;
-      
-      // Open in a new tab without affecting user experience
-      window.open(whatsappUrl, '_blank');
-    } catch (error) {
-      console.error("Failed to send WhatsApp notification", error);
-    }
     
     toast.success('تم إنشاء الحساب وتسجيل الدخول بنجاح');
     return true;
@@ -198,6 +197,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       toast.success(`تم إضافة ${points} نقطة إلى رصيدك`);
+      
+      // Show message to send screenshot if all answers are correct
+      if (points === 15) {
+        toast.success(
+          'مبروك! لقد أجبت على جميع الأسئلة بشكل صحيح! التقط صورة للشاشة وأرسلها إلى 01007570190 للدخول في سحب على حساب بريميوم و 100 جنيه كاش',
+          { duration: 10000 }
+        );
+      }
     }
   };
 
@@ -225,6 +232,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     const cashAmount = (points / 1000) * 100;
     toast.success(`تم استبدال ${points} نقطة بمبلغ ${cashAmount} جنيه. سيتم إرسال المبلغ إلى الرقم ${cashNumber}`);
+    
+    // إرسال رسالة استبدال النقاط إلى رقم الواتساب
+    try {
+      const cashoutMessage = `استبدال نقاط جديد:\nالمستخدم: ${user.username}\nالنقاط: ${points}\nالمبلغ: ${cashAmount} جنيه\nرقم الاستلام: ${cashNumber}`;
+      const whatsappUrl = `https://wa.me/01007570190?text=${encodeURIComponent(cashoutMessage)}`;
+      
+      window.open(whatsappUrl, '_blank');
+    } catch (error) {
+      console.error("Failed to send WhatsApp notification", error);
+    }
+    
     return true;
   };
 
@@ -253,6 +271,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       toast.success('تم تحديث الصورة الشخصية بنجاح');
     }
   };
+  
+  const hidePromotion = () => {
+    if (user) {
+      setUser({ ...user, showPromotion: false });
+      
+      // Update mock data
+      if (mockUsers[user.id]) {
+        mockUsers[user.id].showPromotion = false;
+      }
+    }
+  };
 
   return (
     <UserContext.Provider value={{ 
@@ -266,7 +295,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       updateAvatar,
       canPlayQuizCategory,
       updateLastPlayedQuiz,
-      getTimeRemaining
+      getTimeRemaining,
+      hidePromotion
     }}>
       {children}
     </UserContext.Provider>

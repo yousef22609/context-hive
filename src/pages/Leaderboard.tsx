@@ -1,4 +1,5 @@
-import React, { useEffect, useContext } from 'react';
+
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
@@ -16,12 +17,22 @@ const Leaderboard: React.FC = () => {
     }
   }, [user, navigate]);
   
-  // Get the leaderboard data from the UserContext mock data
-  const userContext = useContext(React.createContext<any>(undefined));
-  const mockUsers = userContext?._currentValue.value?.mockUsers || {};
+  // Mock users for leaderboard
+  const mockUsers = {
+    'user1': { username: 'يوسف هشام', points: 100, avatar: 'https://i.pravatar.cc/150?img=11' },
+    'user2': { username: 'احمد', points: 25, avatar: 'https://i.pravatar.cc/150?img=1' },
+    'user3': { username: 'محمد', points: 18, avatar: 'https://i.pravatar.cc/150?img=2' },
+    'user4': { username: 'سارة', points: 32, avatar: 'https://i.pravatar.cc/150?img=3' },
+    'user5': { username: 'فاطمة', points: 47, avatar: 'https://i.pravatar.cc/150?img=4' },
+    'user6': { username: 'عمر', points: 55, avatar: 'https://i.pravatar.cc/150?img=5' },
+    'user7': { username: 'خالد', points: 29, avatar: 'https://i.pravatar.cc/150?img=6' },
+    'user8': { username: 'ليلى', points: 37, avatar: 'https://i.pravatar.cc/150?img=7' },
+    'user9': { username: 'حسن', points: 62, avatar: 'https://i.pravatar.cc/150?img=8' },
+    'user10': { username: 'نور', points: 41, avatar: 'https://i.pravatar.cc/150?img=9' }
+  };
   
   // Convert mockUsers object to array and sort by points
-  const leaderboardData = Object.entries(mockUsers).map(([id, userData]: [string, any]) => ({
+  const leaderboardData = Object.entries(mockUsers).map(([id, userData]) => ({
     id,
     username: userData.username,
     points: userData.points,
@@ -29,7 +40,7 @@ const Leaderboard: React.FC = () => {
   })).sort((a, b) => b.points - a.points);
   
   // Find current user's rank
-  const userRank = user ? leaderboardData.findIndex(item => item.id === user.id) + 1 : 0;
+  const userRank = user ? leaderboardData.findIndex(item => item.username === user.username) + 1 : 0;
   
   if (!user) return null;
 
@@ -85,7 +96,7 @@ const Leaderboard: React.FC = () => {
               username={player.username}
               points={player.points}
               avatar={player.avatar}
-              isCurrentUser={user && player.id === user.id}
+              isCurrentUser={user && player.username === user.username}
             />
           ))}
         </div>
@@ -104,7 +115,7 @@ const Leaderboard: React.FC = () => {
             {leaderboardData.slice(3).map((player, index) => (
               <div 
                 key={player.id}
-                className={`p-3 ${player.id === user?.id ? 'bg-primary/5' : ''}`}
+                className={`p-3 ${player.username === user?.username ? 'bg-primary/5' : ''}`}
               >
                 <div className="grid grid-cols-12 gap-2 items-center">
                   <div className="col-span-2 text-center font-medium">
@@ -123,7 +134,7 @@ const Leaderboard: React.FC = () => {
                       </div>
                     )}
                     <span className="font-medium">{player.username}</span>
-                    {player.id === user?.id && (
+                    {player.username === user?.username && (
                       <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded mr-2">
                         أنت
                       </span>
