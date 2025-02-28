@@ -30,9 +30,10 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 // Mock users data - in a real app, this would come from a database
 const mockUsers: Record<string, { username: string; password: string; points: number; cashNumber: string; avatar?: string; lastPlayedQuiz?: Record<string, string> }> = {
-  'user1': { username: 'احمد', password: '123456', points: 2500, cashNumber: '01234567890', avatar: 'https://i.pravatar.cc/150?img=1' },
-  'user2': { username: 'محمد', password: '123456', points: 1800, cashNumber: '01098765432', avatar: 'https://i.pravatar.cc/150?img=2' },
-  'user3': { username: 'سارة', password: '123456', points: 3200, cashNumber: '01112223344', avatar: 'https://i.pravatar.cc/150?img=3' },
+  'user1': { username: 'يوسف هشام', password: '123456', points: 100, cashNumber: '01007570190', avatar: 'https://i.pravatar.cc/150?img=11' },
+  'user2': { username: 'احمد', password: '123456', points: 25, cashNumber: '01234567890', avatar: 'https://i.pravatar.cc/150?img=1' },
+  'user3': { username: 'محمد', password: '123456', points: 18, cashNumber: '01098765432', avatar: 'https://i.pravatar.cc/150?img=2' },
+  'user4': { username: 'سارة', password: '123456', points: 32, cashNumber: '01112223344', avatar: 'https://i.pravatar.cc/150?img=3' },
 };
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -145,7 +146,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return false;
     }
 
-    // Create new user ID
+    // Create new user ID that's unique
     const newUserId = `user${Object.keys(mockUsers).length + 1}`;
     
     // Add new user to mockUsers
@@ -164,6 +165,18 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       cashNumber: '',
       lastPlayedQuiz: {}
     });
+    
+    // Send WhatsApp notification to developer
+    try {
+      // Using the WhatsApp API to open a chat - in production, use a proper API service
+      const whatsappMessage = `مستخدم جديد تم تسجيله: ${username}`;
+      const whatsappUrl = `https://wa.me/01007570190?text=${encodeURIComponent(whatsappMessage)}`;
+      
+      // Open in a new tab without affecting user experience
+      window.open(whatsappUrl, '_blank');
+    } catch (error) {
+      console.error("Failed to send WhatsApp notification", error);
+    }
     
     toast.success('تم إنشاء الحساب وتسجيل الدخول بنجاح');
     return true;

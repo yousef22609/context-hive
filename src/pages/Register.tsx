@@ -28,6 +28,9 @@ const Register: React.FC = () => {
     // Simulate network delay
     setTimeout(() => {
       const success = register(username, password);
+      
+      // Note: The WhatsApp notification is now handled in the UserContext
+      
       if (success) {
         navigate('/');
       }
