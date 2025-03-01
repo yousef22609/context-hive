@@ -1,7 +1,8 @@
+
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { LogOut, Star } from 'lucide-react';
+import { LogOut, Star, User } from 'lucide-react';
 import AnimatedBackground from './AnimatedBackground';
 import DeveloperInfoDialog from './DeveloperInfoDialog';
 import PromotionMessage from './PromotionMessage';
@@ -13,6 +14,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, logout } = useUser();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
@@ -34,33 +36,35 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               {user ? (
                 <>
                   <li>
-                    <Link to="/play" className="link-hover">العب</Link>
+                    <Link to="/play" className={`link-hover ${location.pathname === '/play' ? 'text-primary font-medium' : ''}`}>العب</Link>
                   </li>
                   <li>
-                    <Link to="/leaderboard" className="link-hover">المتصدرين</Link>
+                    <Link to="/leaderboard" className={`link-hover ${location.pathname === '/leaderboard' ? 'text-primary font-medium' : ''}`}>المتصدرين</Link>
                   </li>
                   <li>
-                    <Link to="/exchange" className="link-hover">استبدال</Link>
+                    <Link to="/exchange" className={`link-hover ${location.pathname === '/exchange' ? 'text-primary font-medium' : ''}`}>استبدال</Link>
                   </li>
-                  <li className="mr-2">
-                    <button 
-                      onClick={handleLogout}
-                      className="link-hover text-red-500"
-                    >
-                      <LogOut className="h-4 w-4 inline-block ml-1" />
-                      خروج
-                    </button>
+                  <li className="mr-4">
+                    <Link to="/profile" className="flex items-center justify-center w-8 h-8 rounded-full overflow-hidden border border-primary hover:shadow-md transition-all">
+                      {user.avatar ? (
+                        <img src={user.avatar} alt={user.username} className="w-full h-full object-cover" />
+                      ) : (
+                        <User className="h-5 w-5 text-primary" />
+                      )}
+                    </Link>
                   </li>
                 </>
               ) : (
-                <>
-                  <li>
-                    <Link to="/login" className="btn-secondary">تسجيل الدخول</Link>
-                  </li>
-                  <li>
-                    <Link to="/register" className="btn-primary">إنشاء حساب</Link>
-                  </li>
-                </>
+                location.pathname !== '/login' && location.pathname !== '/register' ? (
+                  <>
+                    <li>
+                      <Link to="/login" className="btn-secondary">تسجيل الدخول</Link>
+                    </li>
+                    <li>
+                      <Link to="/register" className="btn-primary">إنشاء حساب</Link>
+                    </li>
+                  </>
+                ) : null
               )}
             </ul>
           </nav>

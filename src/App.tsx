@@ -15,6 +15,7 @@ import Play from "./pages/Play";
 import Leaderboard from "./pages/Leaderboard";
 import Exchange from "./pages/Exchange";
 import NotFound from "./pages/NotFound";
+import UserProfile from "./pages/UserProfile";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => {
               <Route path="/play" element={<Play />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/exchange" element={<Exchange />} />
+              <Route path="/profile" element={<UserProfile />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
