@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { LogOut, Star, User } from 'lucide-react';
+import { LogOut, Star, User, LayoutDashboard } from 'lucide-react';
 import AnimatedBackground from './AnimatedBackground';
 import DeveloperInfoDialog from './DeveloperInfoDialog';
 import PromotionMessage from './PromotionMessage';
@@ -35,6 +35,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <ul className="flex items-center space-x-4 space-x-reverse rtl:space-x-reverse">
               {user ? (
                 <>
+                  <li>
+                    <Link to="/dashboard" className={`link-hover ${location.pathname === '/dashboard' ? 'text-primary font-medium' : ''}`}>
+                      <span className="flex items-center">
+                        <LayoutDashboard className="h-4 w-4 mr-1" />
+                        لوحة التحكم
+                      </span>
+                    </Link>
+                  </li>
                   <li>
                     <Link to="/play" className={`link-hover ${location.pathname === '/play' ? 'text-primary font-medium' : ''}`}>العب</Link>
                   </li>

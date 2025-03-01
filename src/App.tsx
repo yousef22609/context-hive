@@ -12,6 +12,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Play from "./pages/Play";
+import Dashboard from "./pages/Dashboard"; // New Dashboard page
 import Leaderboard from "./pages/Leaderboard";
 import Exchange from "./pages/Exchange";
 import NotFound from "./pages/NotFound";
@@ -37,6 +38,7 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/play" element={<Play />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/exchange" element={<Exchange />} />
               <Route path="/profile" element={<UserProfile />} />
