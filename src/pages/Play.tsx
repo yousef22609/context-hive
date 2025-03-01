@@ -14,28 +14,36 @@ const categories: QuizCategory[] = [
     name: 'معلومات عامة',
     description: 'اختبر معلوماتك العامة في مختلف المجالات',
     icon: '🌎',
-    pointsPerQuestion: 1
+    pointsPerQuestion: 1,
+    questions: [], // إضافة مصفوفة أسئلة فارغة (سيتم استخدام الأسئلة من ملف البيانات)
+    cooldownHours: 24 // فترة الانتظار 24 ساعة
   },
   {
     id: 'iq',
     name: 'اختبار الذكاء',
     description: 'تحدي قدراتك العقلية مع أسئلة منطقية صعبة',
     icon: '🧠',
-    pointsPerQuestion: 2
+    pointsPerQuestion: 2,
+    questions: [],
+    cooldownHours: 24
   },
   {
     id: 'funny',
     name: 'أسئلة مرحة',
     description: 'استمتع مع مجموعة من الأسئلة الترفيهية المسلية',
     icon: '😂',
-    pointsPerQuestion: 1
+    pointsPerQuestion: 1,
+    questions: [],
+    cooldownHours: 24
   },
   {
     id: 'ramadan',
     name: 'خاص برمضان',
     description: 'أسئلة خاصة بشهر رمضان الكريم والعبادات',
     icon: '🌙',
-    pointsPerQuestion: 3
+    pointsPerQuestion: 3,
+    questions: [],
+    cooldownHours: 24
   }
 ];
 
