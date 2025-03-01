@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
-import { GameController, Trophy, DollarSign, User } from 'lucide-react';
+import { Play, Trophy, DollarSign, User } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Dashboard: React.FC = () => {
@@ -40,7 +40,7 @@ const Dashboard: React.FC = () => {
             className={`glass-card p-8 flex flex-col items-center text-center ${cardHoverEffect} bg-gradient-to-br from-blue-500/10 to-blue-600/5 group`}
           >
             <div className="p-4 rounded-full bg-blue-500/10 mb-4 group-hover:bg-blue-500/30 transition-colors">
-              <GameController className="h-10 w-10 text-blue-500" />
+              <Play className="h-10 w-10 text-blue-500" />
             </div>
             <h2 className="text-xl font-bold mb-2">العب الآن</h2>
             <p className="text-muted-foreground">اختبر معلوماتك واكسب النقاط</p>
