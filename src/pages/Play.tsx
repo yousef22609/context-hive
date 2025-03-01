@@ -1,209 +1,75 @@
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
-import { quizCategories } from '../data/quizData';
-import { toast } from 'sonner';
 import CategorySelection from '../components/play/CategorySelection';
-import QuizScreen from '../components/play/QuizScreen';
-import GameOverScreen from '../components/play/GameOverScreen';
+import { Star, ChevronLeft, Users } from 'lucide-react';
 
 const Play: React.FC = () => {
-  const { user, addPoints, canPlayQuizCategory, updateLastPlayedQuiz, getTimeRemaining } = useUser();
+  const { user, logout, isAdmin, getUsersCount } = useUser();
   const navigate = useNavigate();
-  
-  // حالة اختيار الفئة
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  
-  // حالات صفحة اللعب
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(60);
-  const [gameOver, setGameOver] = useState(false);
-  const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
-  
-  // اختيار أسئلة عشوائية من الفئة المختارة
-  const randomQuestions = useMemo(() => {
-    if (!selectedCategory) return [];
-    
-    const category = quizCategories.find(cat => cat.id === selectedCategory);
-    if (!category) return [];
-    
-    const shuffled = [...category.questions].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 10);
-  }, [selectedCategory]);
-  
-  // الفئة المختارة كاملة
-  const selectedCategoryData = useMemo(() => {
-    if (!selectedCategory) return null;
-    return quizCategories.find(cat => cat.id === selectedCategory) || null;
-  }, [selectedCategory]);
-  
-  // القيمة النقطية لكل سؤال
-  const pointsPerQuestion = useMemo(() => {
-    return selectedCategoryData?.pointsPerQuestion || 1;
-  }, [selectedCategoryData]);
-  
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!user) {
-      navigate('/login');
-    }
-  }, [user, navigate]);
-  
-  // Timer countdown during game
-  useEffect(() => {
-    if (!selectedCategory || gameOver || isCorrect !== null || randomQuestions.length === 0) return;
-    
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          handleTimeout();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    
-    return () => clearInterval(timer);
-  }, [currentQuestionIndex, isCorrect, gameOver, selectedCategory, randomQuestions.length]);
-  
-  const handleCategorySelect = (categoryId: string) => {
-    if (!canPlayQuizCategory(categoryId)) {
-      toast.error(`لا يمكنك لعب هذه الفئة الآن. ${getTimeRemaining(categoryId)}`);
-      return;
-    }
-    
-    // رسالة تنبيهية لفوازير رمضان
-    if (categoryId === 'ramadan') {
-      toast.info('جاوب بعقل! سؤال هنا بـ 10 نقاط لو صح', { duration: 5000 });
-    }
-    
-    setSelectedCategory(categoryId);
-    setCurrentQuestionIndex(0);
-    setSelectedOption(null);
-    setIsCorrect(null);
-    setScore(0);
-    setTimeLeft(60);
-    setGameOver(false);
-    setAnsweredQuestions([]);
-  };
-  
-  const handleTimeout = useCallback(() => {
-    setIsCorrect(false);
-    setTimeout(() => {
-      if (currentQuestionIndex < randomQuestions.length - 1) {
-        setCurrentQuestionIndex(prev => prev + 1);
-        setSelectedOption(null);
-        setIsCorrect(null);
-        setTimeLeft(60);
-      } else {
-        finishGame();
-      }
-    }, 1500);
-  }, [currentQuestionIndex, randomQuestions.length]);
-  
-  const handleOptionSelect = useCallback((option: string) => {
-    if (selectedOption || isCorrect !== null) return;
-    
-    setSelectedOption(option);
-    const currentQuestion = randomQuestions[currentQuestionIndex];
-    const correct = option === currentQuestion.correctAnswer;
-    
-    setIsCorrect(correct);
-    if (correct) {
-      setScore(prev => prev + pointsPerQuestion);
-      setAnsweredQuestions(prev => [...prev, currentQuestionIndex]);
-    }
-    
-    setTimeout(() => {
-      if (currentQuestionIndex < randomQuestions.length - 1) {
-        setCurrentQuestionIndex(prev => prev + 1);
-        setSelectedOption(null);
-        setIsCorrect(null);
-        setTimeLeft(60);
-      } else {
-        finishGame();
-      }
-    }, 1500);
-  }, [currentQuestionIndex, selectedOption, isCorrect, randomQuestions, pointsPerQuestion]);
-  
-  const finishGame = useCallback(() => {
-    setGameOver(true);
-    addPoints(score);
-    
-    // تحديث وقت آخر لعبة للفئة
-    if (selectedCategory) {
-      updateLastPlayedQuiz(selectedCategory);
-    }
-  }, [score, addPoints, selectedCategory, updateLastPlayedQuiz]);
-  
-  const restartGame = useCallback(() => {
-    setSelectedCategory(null);
-    setCurrentQuestionIndex(0);
-    setSelectedOption(null);
-    setIsCorrect(null);
-    setScore(0);
-    setTimeLeft(60);
-    setGameOver(false);
-    setAnsweredQuestions([]);
-  }, []);
-  
-  if (!user) return null;
-  
-  // تحديد خلفية للصفحة بناءً على الفئة المختارة
-  const getPageBackground = () => {
-    if (selectedCategory === 'ramadan') {
-      return "bg-gradient-to-b from-indigo-900/80 via-purple-900/80 to-indigo-900/80";
-    }
-    return "";
-  };
-  
-  // حساب نسبة التقدم
-  const progress = (currentQuestionIndex / randomQuestions.length) * 100;
-  
+
+  // إذا لم يكن المستخدم قد سجل الدخول، قم بتوجيهه إلى صفحة تسجيل الدخول
+  if (!user) {
+    return (
+      <Layout>
+        <div className="glass-card p-8 animate-fade-in">
+          <h2 className="text-xl font-bold text-center mb-4">يجب تسجيل الدخول أولاً</h2>
+          <p className="text-center mb-6">قم بتسجيل الدخول للمشاركة في الاختبارات وكسب النقاط</p>
+          <div className="flex justify-center space-x-4 space-x-reverse">
+            <Link to="/login" className="btn-primary">
+              تسجيل الدخول
+            </Link>
+            <Link to="/register" className="btn-secondary">
+              إنشاء حساب
+            </Link>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
-      <div className={`min-h-screen ${getPageBackground()}`}>
-        {!selectedCategory && (
-          <CategorySelection 
-            categories={quizCategories}
-            onSelectCategory={handleCategorySelect}
-            canPlayCategory={canPlayQuizCategory}
-            getTimeRemaining={getTimeRemaining}
-          />
+      <div className="flex flex-col h-full animate-fade-in">
+        <div className="flex items-center justify-between mb-6">
+          <Link to="/" className="flex items-center text-muted-foreground hover:text-primary">
+            <ChevronLeft className="mr-1 h-5 w-5" />
+            <span>الرئيسية</span>
+          </Link>
+          
+          <div className="flex items-center">
+            <div className="flex items-center mr-4">
+              <Star className="h-5 w-5 text-yellow-500 mr-1" />
+              <span className="font-bold">{user.points} نقطة</span>
+            </div>
+            
+            <button 
+              onClick={() => logout()}
+              className="text-sm text-muted-foreground hover:text-destructive"
+            >
+              تسجيل الخروج
+            </button>
+          </div>
+        </div>
+        
+        {/* عرض معلومات المسؤول */}
+        {isAdmin() && (
+          <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4 mb-6 border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center text-blue-800 dark:text-blue-300 font-medium mb-2">
+              <Users className="h-5 w-5 mr-2" />
+              <h3>لوحة المسؤول</h3>
+            </div>
+            <p className="text-blue-700 dark:text-blue-400">
+              إجمالي عدد المستخدمين المسجلين: <span className="font-bold">{getUsersCount()}</span>
+            </p>
+          </div>
         )}
         
-        {selectedCategory && !gameOver && randomQuestions.length > 0 && (
-          <QuizScreen 
-            currentQuestion={randomQuestions[currentQuestionIndex]}
-            currentQuestionIndex={currentQuestionIndex}
-            totalQuestions={randomQuestions.length}
-            timeLeft={timeLeft}
-            score={score}
-            progress={progress}
-            selectedOption={selectedOption}
-            isCorrect={isCorrect}
-            handleOptionSelect={handleOptionSelect}
-            categoryType={selectedCategory}
-            pointsPerQuestion={pointsPerQuestion}
-          />
-        )}
+        <h1 className="text-2xl font-bold mb-6 text-center">اختر فئة واختبر معلوماتك!</h1>
         
-        {gameOver && user && (
-          <GameOverScreen 
-            score={score}
-            answeredQuestions={answeredQuestions}
-            totalQuestions={randomQuestions.length}
-            user={user}
-            categoryType={selectedCategory || ''}
-            onRestart={restartGame}
-          />
-        )}
+        <CategorySelection />
       </div>
     </Layout>
   );

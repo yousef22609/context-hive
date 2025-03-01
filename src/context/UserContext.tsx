@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { QuizCategory } from '../data/quizData';
@@ -26,6 +25,9 @@ interface UserContextType {
   updateLastPlayedQuiz: (categoryId: string) => void;
   getTimeRemaining: (categoryId: string) => string;
   hidePromotion: () => void;
+  getAllUsers: () => User[];
+  getUsersCount: () => number;
+  isAdmin: () => boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -43,6 +45,9 @@ const mockUsers: Record<string, { username: string; password: string; points: nu
   'user9': { username: 'حسن', password: '123456', points: 62, cashNumber: '01098765432', avatar: 'https://i.pravatar.cc/150?img=8', showPromotion: true },
   'user10': { username: 'نور', password: '123456', points: 41, cashNumber: '01112223344', avatar: 'https://i.pravatar.cc/150?img=9', showPromotion: true },
 };
+
+// تحديد المستخدم الذي لديه صلاحيات المسؤول
+const ADMIN_USER_ID = 'user1'; // يوسف هشام هو المسؤول
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -283,6 +288,30 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // وظائف إدارة المستخدمين للمسؤول
+  const getAllUsers = () => {
+    // تحويل مجموعة المستخدمين من كائن إلى مصفوفة
+    return Object.keys(mockUsers).map(id => ({
+      id,
+      username: mockUsers[id].username,
+      points: mockUsers[id].points,
+      cashNumber: mockUsers[id].cashNumber,
+      avatar: mockUsers[id].avatar,
+      lastPlayedQuiz: mockUsers[id].lastPlayedQuiz || {},
+      showPromotion: mockUsers[id].showPromotion
+    }));
+  };
+
+  // الحصول على عدد المستخدمين
+  const getUsersCount = () => {
+    return Object.keys(mockUsers).length;
+  };
+
+  // التحقق مما إذا كان المستخدم الحالي هو المسؤول
+  const isAdmin = () => {
+    return user?.id === ADMIN_USER_ID;
+  };
+
   return (
     <UserContext.Provider value={{ 
       user, 
@@ -296,7 +325,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       canPlayQuizCategory,
       updateLastPlayedQuiz,
       getTimeRemaining,
-      hidePromotion
+      hidePromotion,
+      getAllUsers,
+      getUsersCount,
+      isAdmin
     }}>
       {children}
     </UserContext.Provider>
