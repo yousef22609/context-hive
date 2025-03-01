@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -23,7 +24,8 @@ const Login: React.FC = () => {
     e.preventDefault();
     const success = login(username, password);
     if (success) {
-      navigate('/dashboard'); // Redirect to dashboard instead of home
+      toast.success(`مرحباً بك ${username}! جاري تحويلك إلى لوحة التحكم...`);
+      navigate('/dashboard');
     }
   };
 

@@ -21,15 +21,32 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     navigate('/login');
   };
 
+  // If the user is not logged in and not on login or register page, redirect to login
+  React.useEffect(() => {
+    if (!user && 
+        location.pathname !== '/login' && 
+        location.pathname !== '/register' && 
+        location.pathname !== '/') {
+      navigate('/login');
+    }
+  }, [user, location.pathname, navigate]);
+
   return (
     <div className="flex flex-col min-h-screen" dir="rtl">
       <AnimatedBackground />
       <header className="py-4 px-6 z-10 relative">
         <div className="mx-auto max-w-7xl flex justify-between items-center">
-          <Link to="/" className="flex items-center">
-            <Star className="h-6 w-6 text-primary animate-star-glow mr-2" />
-            <h1 className="text-xl font-bold">يوما كويز</h1>
-          </Link>
+          {user ? (
+            <Link to="/dashboard" className="flex items-center">
+              <Star className="h-6 w-6 text-primary animate-star-glow mr-2" />
+              <h1 className="text-xl font-bold">يوما كويز</h1>
+            </Link>
+          ) : (
+            <Link to="/" className="flex items-center">
+              <Star className="h-6 w-6 text-primary animate-star-glow mr-2" />
+              <h1 className="text-xl font-bold">يوما كويز</h1>
+            </Link>
+          )}
           
           <nav>
             <ul className="flex items-center space-x-4 space-x-reverse rtl:space-x-reverse">
@@ -61,6 +78,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                       )}
                     </Link>
                   </li>
+                  <li>
+                    <button 
+                      onClick={handleLogout}
+                      className="text-sm text-muted-foreground hover:text-destructive flex items-center"
+                    >
+                      <LogOut className="h-4 w-4 mr-1" />
+                      خروج
+                    </button>
+                  </li>
                 </>
               ) : (
                 location.pathname !== '/login' && location.pathname !== '/register' ? (
@@ -80,7 +106,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </header>
       
       <main className="flex-1 p-6 z-0 relative">
-        <PromotionMessage />
+        {user && <PromotionMessage />}
         {children}
       </main>
       

@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -31,7 +32,8 @@ const Register: React.FC = () => {
     
     const success = register(username, password);
     if (success) {
-      navigate('/dashboard'); // Redirect to dashboard instead of home
+      toast.success(`مرحباً بك ${username}! تم إنشاء حسابك بنجاح. جاري تحويلك إلى لوحة التحكم...`);
+      navigate('/dashboard');
     }
   };
 
