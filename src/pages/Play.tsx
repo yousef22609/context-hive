@@ -32,7 +32,7 @@ const categories: QuizCategory[] = [
     name: 'أسئلة مرحة',
     description: 'استمتع مع مجموعة من الأسئلة الترفيهية المسلية',
     icon: '😂',
-    pointsPerQuestion: 1,
+    pointsPerQuestion: 5, // زيادة النقاط إلى 5 نقاط لكل إجابة صحيحة
     questions: [],
     cooldownHours: 24
   },
@@ -42,6 +42,24 @@ const categories: QuizCategory[] = [
     description: 'أسئلة خاصة بشهر رمضان الكريم والعبادات',
     icon: '🌙',
     pointsPerQuestion: 3,
+    questions: [],
+    cooldownHours: 24
+  },
+  {
+    id: 'cartoon',
+    name: 'كرتون وأنيمي',
+    description: 'أسئلة عن الشخصيات الكرتونية والأنيمي المشهورة',
+    icon: '🎬',
+    pointsPerQuestion: 1,
+    questions: [],
+    cooldownHours: 24
+  },
+  {
+    id: 'riddles',
+    name: 'فوازير وألغاز',
+    description: 'اختبر ذكائك مع مجموعة من الفوازير والألغاز المحيرة',
+    icon: '🧩',
+    pointsPerQuestion: 5, // 5 نقاط لكل إجابة صحيحة
     questions: [],
     cooldownHours: 24
   }

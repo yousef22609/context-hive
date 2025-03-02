@@ -16,7 +16,7 @@ const firebaseConfig = {
   authDomain: "web-yoma.firebaseapp.com",
   databaseURL: "https://web-yoma-default-rtdb.firebaseio.com",
   projectId: "web-yoma",
-  storageBucket: "web-yoma.firebasestorage.app",
+  storageBucket: "web-yoma.appspot.com", // Fixed storage bucket URL
   messagingSenderId: "886100277983",
   appId: "1:886100277983:web:1b535409c6b50f7260076a"
 };
