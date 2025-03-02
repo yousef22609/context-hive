@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
@@ -22,10 +21,16 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await login(email, password);
-    if (success) {
-      toast.success(`تم تسجيل الدخول بنجاح! جاري تحويلك إلى لوحة التحكم...`);
-      navigate('/dashboard');
+    try {
+      const success = await login(email, password);
+      if (success) {
+        toast.success('تم تسجيل الدخول بنجاح! جاري تحويلك إلى لوحة التحكم...');
+        navigate('/dashboard');
+      } else {
+        toast.error('فشل في تسجيل الدخول، يرجى التحقق من بياناتك.');
+      }
+    } catch (error) {
+      toast.error('حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى.');
     }
   };
 
