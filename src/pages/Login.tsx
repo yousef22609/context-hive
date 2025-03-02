@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import app from "../firebaseConfig";
@@ -19,19 +19,14 @@ const Login: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log("تم تسجيل الدخول:", userCredential.user);
+      await signInWithEmailAndPassword(auth, email, password);
       toast.success('تم تسجيل الدخول بنجاح! جاري تحويلك إلى لوحة التحكم...');
       navigate('/dashboard');
     } catch (error) {
       toast.error('فشل في تسجيل الدخول، يرجى التحقق من بياناتك.');
-      console.error("خطأ في تسجيل الدخول:", error.message);
+      console.error("خطأ في تسجيل الدخول:", error);
     }
     setLoading(false);
-  };
-
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
   };
 
   return (
@@ -76,7 +71,7 @@ const Login: React.FC = () => {
                 />
                 <button
                   type="button"
-                  onClick={toggleShowPassword}
+                  onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 left-0 pl-3 flex items-center"
                 >
                   {showPassword ? (
