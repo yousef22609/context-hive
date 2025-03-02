@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { useUser } from '../context/UserContext';
@@ -32,7 +32,7 @@ const categories: QuizCategory[] = [
     name: 'أسئلة مرحة',
     description: 'استمتع مع مجموعة من الأسئلة الترفيهية المسلية',
     icon: '😂',
-    pointsPerQuestion: 1,
+    pointsPerQuestion: 5, // زيادة النقاط إلى 5 نقاط لكل إجابة صحيحة
     questions: [],
     cooldownHours: 24
   },
@@ -44,11 +44,42 @@ const categories: QuizCategory[] = [
     pointsPerQuestion: 3,
     questions: [],
     cooldownHours: 24
+  },
+  {
+    id: 'cartoon',
+    name: 'كرتون وأنيمي',
+    description: 'أسئلة عن الشخصيات الكرتونية والأنيمي المشهورة',
+    icon: '🎬',
+    pointsPerQuestion: 1,
+    questions: [],
+    cooldownHours: 24
+  },
+  {
+    id: 'riddles',
+    name: 'فوازير وألغاز',
+    description: 'اختبر ذكائك مع مجموعة من الفوازير والألغاز المحيرة',
+    icon: '🧩',
+    pointsPerQuestion: 5, // 5 نقاط لكل إجابة صحيحة
+    questions: [],
+    cooldownHours: 24
   }
 ];
 
 const Play: React.FC = () => {
   const { user, logout, isAdmin, getUsersCount, canPlayQuizCategory, getTimeRemaining, updateLastPlayedQuiz } = useUser();
+  const [usersCount, setUsersCount] = useState<number>(0);
+  
+  // Fetch users count on component mount
+  useEffect(() => {
+    const fetchUsersCount = async () => {
+      if (isAdmin && isAdmin()) {
+        const count = await getUsersCount();
+        setUsersCount(count);
+      }
+    };
+    
+    fetchUsersCount();
+  }, [getUsersCount, isAdmin]);
   
   // معالجة اختيار الفئة
   const handleSelectCategory = (categoryId: string) => {
@@ -86,7 +117,7 @@ const Play: React.FC = () => {
               <h3>لوحة المسؤول</h3>
             </div>
             <p className="text-blue-700 dark:text-blue-400">
-              إجمالي عدد المستخدمين المسجلين: <span className="font-bold">{getUsersCount()}</span>
+              إجمالي عدد المستخدمين المسجلين: <span className="font-bold">{usersCount}</span>
             </p>
           </div>
         )}

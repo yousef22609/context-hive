@@ -1,63 +1,113 @@
-import { useState, useEffect } from "react";
-import { auth, db } from "../firebaseConfig";
-import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import app from "../firebaseConfig";
+import Layout from '../components/Layout';
+import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { toast } from 'sonner';
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
+const auth = getAuth(app);
+
+const Login: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setUserData(docSnap.data());
-        }
-        navigate("/dashboard");
-      }
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, [navigate]);
-
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-
+    setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert("تم تسجيل الدخول بنجاح!");
-      navigate("/dashboard");
-    } catch (err) {
-      setError("خطأ في تسجيل الدخول. تحقق من البريد وكلمة المرور.");
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log("تم تسجيل الدخول:", userCredential.user);
+      toast.success('تم تسجيل الدخول بنجاح! جاري تحويلك إلى لوحة التحكم...');
+      navigate('/dashboard');
+    } catch (error) {
+      toast.error('فشل في تسجيل الدخول، يرجى التحقق من بياناتك.');
+      console.error("خطأ في تسجيل الدخول:", error.message);
     }
+    setLoading(false);
   };
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    alert("تم تسجيل الخروج!");
-    setUserData(null);
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
-    <div>
-      <h2>تسجيل الدخول</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {loading ? <p>جاري التحميل...</p> : userData && <p>مرحبًا {userData.name}!</p>}
-      <form onSubmit={handleLogin}>
-        <input type="email" placeholder="البريد الإلكتروني" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="كلمة المرور" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <button type="submit">تسجيل الدخول</button>
-      </form>
-      {userData && <button onClick={handleLogout}>تسجيل الخروج</button>}
-    </div>
+    <Layout>
+      <div className="flex justify-center items-center min-h-[calc(100vh-200px)]">
+        <div className="glass-card w-full max-w-md p-8 animate-fade-in">
+          <div className="text-center mb-6">
+            <LogIn className="h-12 w-12 text-primary mx-auto mb-2" />
+            <h1 className="text-2xl font-bold">تسجيل الدخول</h1>
+            <p className="text-muted-foreground">أدخل بياناتك للوصول إلى حسابك</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm font-medium">
+                البريد الإلكتروني
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3 py-2 bg-background border rounded-md focus:ring-1 focus:ring-primary focus:border-primary outline-none"
+                placeholder="أدخل البريد الإلكتروني"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="password" className="block text-sm font-medium">
+                كلمة المرور
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-3 pr-10 py-2 bg-background border rounded-md focus:ring-1 focus:ring-primary focus:border-primary outline-none"
+                  placeholder="أدخل كلمة المرور"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={toggleShowPassword}
+                  className="absolute inset-y-0 left-0 pl-3 flex items-center"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5 text-muted-foreground" />
+                  ) : (
+                    <Eye className="h-5 w-5 text-muted-foreground" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-2 px-4 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
+              disabled={loading}
+            >
+              {loading ? 'جاري التحميل...' : 'تسجيل الدخول'}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center text-sm">
+            <p>
+              ليس لديك حساب؟{' '}
+              <Link to="/register" className="text-primary hover:underline">
+                إنشاء حساب جديد
+              </Link>
+            </p>
+          </div>
+        </div>
+      </div>
+    </Layout>
   );
 };
 
