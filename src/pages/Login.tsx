@@ -1,45 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useUser } from '../context/UserContext';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import app from "../firebaseConfig";
 import Layout from '../components/Layout';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { toast } from 'sonner';
+
+const auth = getAuth(app);
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const { user, login, loading } = useUser();
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  // If user is already logged in, redirect to dashboard
-  useEffect(() => {
-    if (user) {
-      navigate('/dashboard');
-    }
-  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const success = await login(email, password);
-      if (success) {
-        toast.success('تم تسجيل الدخول بنجاح! جاري تحويلك إلى لوحة التحكم...');
-        navigate('/dashboard');
-      } else {
-        toast.error('فشل في تسجيل الدخول، يرجى التحقق من بياناتك.');
-      }
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log("تم تسجيل الدخول:", userCredential.user);
+      toast.success('تم تسجيل الدخول بنجاح! جاري تحويلك إلى لوحة التحكم...');
+      navigate('/dashboard');
     } catch (error) {
-      toast.error('حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى.');
+      toast.error('فشل في تسجيل الدخول، يرجى التحقق من بياناتك.');
+      console.error("خطأ في تسجيل الدخول:", error.message);
     }
+    setLoading(false);
   };
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
-
-  // If user is already logged in, don't render the login page
-  if (user) return null;
 
   return (
     <Layout>
