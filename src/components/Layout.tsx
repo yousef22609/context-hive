@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { LogOut, Star, User } from 'lucide-react';
+import { LogOut, Star, User, LayoutDashboard } from 'lucide-react';
 import AnimatedBackground from './AnimatedBackground';
 import DeveloperInfoDialog from './DeveloperInfoDialog';
 import PromotionMessage from './PromotionMessage';
@@ -21,20 +21,45 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     navigate('/login');
   };
 
+  // If the user is not logged in and not on login or register page, redirect to login
+  React.useEffect(() => {
+    if (!user && 
+        location.pathname !== '/login' && 
+        location.pathname !== '/register' && 
+        location.pathname !== '/') {
+      navigate('/login');
+    }
+  }, [user, location.pathname, navigate]);
+
   return (
     <div className="flex flex-col min-h-screen" dir="rtl">
       <AnimatedBackground />
       <header className="py-4 px-6 z-10 relative">
         <div className="mx-auto max-w-7xl flex justify-between items-center">
-          <Link to="/" className="flex items-center">
-            <Star className="h-6 w-6 text-primary animate-star-glow mr-2" />
-            <h1 className="text-xl font-bold">يوما كويز</h1>
-          </Link>
+          {user ? (
+            <Link to="/dashboard" className="flex items-center">
+              <Star className="h-6 w-6 text-primary animate-star-glow mr-2" />
+              <h1 className="text-xl font-bold">يوما كويز</h1>
+            </Link>
+          ) : (
+            <Link to="/" className="flex items-center">
+              <Star className="h-6 w-6 text-primary animate-star-glow mr-2" />
+              <h1 className="text-xl font-bold">يوما كويز</h1>
+            </Link>
+          )}
           
           <nav>
             <ul className="flex items-center space-x-4 space-x-reverse rtl:space-x-reverse">
               {user ? (
                 <>
+                  <li>
+                    <Link to="/dashboard" className={`link-hover ${location.pathname === '/dashboard' ? 'text-primary font-medium' : ''}`}>
+                      <span className="flex items-center">
+                        <LayoutDashboard className="h-4 w-4 mr-1" />
+                        لوحة التحكم
+                      </span>
+                    </Link>
+                  </li>
                   <li>
                     <Link to="/play" className={`link-hover ${location.pathname === '/play' ? 'text-primary font-medium' : ''}`}>العب</Link>
                   </li>
@@ -52,6 +77,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         <User className="h-5 w-5 text-primary" />
                       )}
                     </Link>
+                  </li>
+                  <li>
+                    <button 
+                      onClick={handleLogout}
+                      className="text-sm text-muted-foreground hover:text-destructive flex items-center"
+                    >
+                      <LogOut className="h-4 w-4 mr-1" />
+                      خروج
+                    </button>
                   </li>
                 </>
               ) : (
@@ -72,7 +106,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </header>
       
       <main className="flex-1 p-6 z-0 relative">
-        <PromotionMessage />
+        {user && <PromotionMessage />}
         {children}
       </main>
       
