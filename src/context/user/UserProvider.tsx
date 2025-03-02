@@ -55,9 +55,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loading,
     
     // Authentication methods
-    login: (email, password) => authService.login(email, password),
+    login: (username, password) => authService.login(username, password),
     logout: () => authService.logout(),
-    register: (email, password, username) => authService.register(email, password, username),
+    register: (username, password) => authService.register(username, password),
     
     // User data methods
     addPoints: async (points) => {

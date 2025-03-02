@@ -7,7 +7,6 @@ import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Register: React.FC = () => {
-  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -36,7 +35,7 @@ const Register: React.FC = () => {
       return;
     }
     
-    const success = await register(email, password, username);
+    const success = await register(username, password);
     if (success) {
       toast.success(`مرحباً بك ${username}! تم إنشاء حسابك بنجاح. جاري تحويلك إلى لوحة التحكم...`);
       navigate('/dashboard');
@@ -61,21 +60,6 @@ const Register: React.FC = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-medium">
-                البريد الإلكتروني
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 bg-background border rounded-md focus:ring-1 focus:ring-primary focus:border-primary outline-none"
-                placeholder="أدخل البريد الإلكتروني"
-                required
-              />
-            </div>
-
             <div className="space-y-2">
               <label htmlFor="username" className="block text-sm font-medium">
                 اسم المستخدم

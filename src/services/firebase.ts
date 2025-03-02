@@ -16,7 +16,7 @@ const firebaseConfig = {
   authDomain: "web-yoma.firebaseapp.com",
   databaseURL: "https://web-yoma-default-rtdb.firebaseio.com",
   projectId: "web-yoma",
-  storageBucket: "web-yoma.appspot.com", // Fixed storage bucket URL
+  storageBucket: "web-yoma.appspot.com",
   messagingSenderId: "886100277983",
   appId: "1:886100277983:web:1b535409c6b50f7260076a"
 };
@@ -38,9 +38,11 @@ export interface UserProfile {
 
 // Firebase authentication functions
 export const firebaseAuth = {
-  // Create a new user with email and password
-  register: async (email: string, password: string, username: string) => {
+  // Create a new user with username and password
+  register: async (username: string, password: string) => {
     try {
+      // Generate an email from the username
+      const email = `${username}@yoma-app.com`;
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       // Create user profile in database
       await set(ref(database, `users/${userCredential.user.uid}`), {
@@ -57,9 +59,11 @@ export const firebaseAuth = {
     }
   },
 
-  // Sign in existing user
-  login: async (email: string, password: string) => {
+  // Sign in existing user with username and password
+  login: async (username: string, password: string) => {
     try {
+      // Convert username to email format
+      const email = `${username}@yoma-app.com`;
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       return userCredential.user;
     } catch (error) {
