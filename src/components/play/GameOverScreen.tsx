@@ -2,7 +2,7 @@
 import React from 'react';
 import { Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { User } from '../../context/UserContext';
+import { User } from '../../context/user/types';
 
 interface GameOverScreenProps {
   score: number;
