@@ -22,16 +22,7 @@ const queryClient = new QueryClient();
 
 // Protected route component that redirects to login if not authenticated
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useUser();
-  
-  // Show loading state
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  const { user } = useUser();
   
   if (!user) {
     return <Navigate to="/login" replace />;
@@ -41,16 +32,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const AppRoutes = () => {
-  const { user, loading } = useUser();
-  
-  // Show loading state when checking authentication
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  const { user } = useUser();
   
   // If user is logged in and tries to access the home page, redirect to dashboard
   if (user && window.location.pathname === "/") {
