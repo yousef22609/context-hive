@@ -1,111 +1,131 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
-import { toast } from 'sonner';
-import Layout from '../components/Layout';
-import '../firebaseConfig'; // استيراد تهيئة Firebase
+// firebaseConfig.ts - إعداد Firebase
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
-const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
-  const auth = getAuth();
+const firebaseConfig = {
+  apiKey: "YOUR_FIREBASE_API_KEY",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "your-messaging-sender-id",
+  appId: "your-app-id",
+};
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigate('/dashboard');
-      }
-    });
-    return () => unsubscribe();
-  }, [auth, navigate]);
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+// ------------------------------
+
+// Signup.tsx - صفحة إنشاء الحساب
+import { useState } from "react";
+import { auth, db } from "../firebaseConfig";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+
+const Signup = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSignup = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      toast.success('تم تسجيل الدخول بنجاح!');
-      navigate('/dashboard');
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        name,
+        email,
+        uid: user.uid,
+      });
+
+      alert("تم إنشاء الحساب بنجاح!");
     } catch (err) {
-      setError('فشل تسجيل الدخول. تحقق من البريد وكلمة المرور.');
+      setError(err.message);
     }
   };
 
   return (
-    <Layout>
-      <div className="flex justify-center items-center min-h-[calc(100vh-200px)]">
-        <div className="glass-card w-full max-w-md p-8 animate-fade-in">
-          <div className="text-center mb-6">
-            <LogIn className="h-12 w-12 text-primary mx-auto mb-2" />
-            <h1 className="text-2xl font-bold">تسجيل الدخول</h1>
-            <p className="text-muted-foreground">أدخل بياناتك للوصول إلى حسابك</p>
-          </div>
+    <div>
+      <h2>إنشاء حساب جديد</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <form onSubmit={handleSignup}>
+        <input type="text" placeholder="الاسم" value={name} onChange={(e) => setName(e.target.value)} required />
+        <input type="email" placeholder="البريد الإلكتروني" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input type="password" placeholder="كلمة المرور" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <button type="submit">تسجيل</button>
+      </form>
+    </div>
+  );
+};
 
-          {error && <p className="text-red-500 text-center">{error}</p>}
+export default Signup;
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-medium">
-                البريد الإلكتروني
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:ring-1 focus:ring-primary focus:border-primary outline-none"
-                placeholder="أدخل بريدك الإلكتروني"
-                required
-              />
-            </div>
+// ------------------------------
 
-            <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-medium">
-                كلمة المرور
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-md focus:ring-1 focus:ring-primary focus:border-primary outline-none"
-                  placeholder="أدخل كلمة المرور"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 left-0 pl-3 flex items-center"
-                >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
-              </div>
-            </div>
+// Login.tsx - صفحة تسجيل الدخول
+import { useState, useEffect } from "react";
+import { auth, db } from "../firebaseConfig";
+import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
-            <button
-              type="submit"
-              className="w-full py-2 px-4 rounded-md bg-primary text-white hover:bg-primary/90 transition"
-            >
-              تسجيل الدخول
-            </button>
-          </form>
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-          <div className="mt-6 text-center text-sm">
-            <p>
-              ليس لديك حساب؟{' '}
-              <Link to="/signup" className="text-primary hover:underline">
-                إنشاء حساب جديد
-              </Link>
-            </p>
-          </div>
-        </div>
-      </div>
-    </Layout>
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setUserData(docSnap.data());
+        }
+      }
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      alert("تم تسجيل الدخول بنجاح!");
+      window.location.href = "/dashboard";
+    } catch (err) {
+      setError("خطأ في تسجيل الدخول. تحقق من البريد وكلمة المرور.");
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    alert("تم تسجيل الخروج!");
+    setUserData(null);
+  };
+
+  return (
+    <div>
+      <h2>تسجيل الدخول</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {loading ? <p>جاري التحميل...</p> : userData && <p>مرحبًا {userData.name}!</p>}
+      <form onSubmit={handleLogin}>
+        <input type="email" placeholder="البريد الإلكتروني" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input type="password" placeholder="كلمة المرور" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <button type="submit">تسجيل الدخول</button>
+      </form>
+      {userData && <button onClick={handleLogout}>تسجيل الخروج</button>}
+    </div>
   );
 };
 
