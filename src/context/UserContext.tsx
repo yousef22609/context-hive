@@ -1,6 +1,8 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { QuizCategory } from '../data/quizData';
+import { User as FirebaseUser } from 'firebase/auth';
+import { firebaseAuth, firebaseDB, UserProfile } from '../services/firebase';
 
 export interface User {
   id: string;
@@ -8,71 +10,75 @@ export interface User {
   points: number;
   cashNumber: string;
   avatar?: string;
-  lastPlayedQuiz?: Record<string, string>; // القائمة وتاريخ آخر لعب
+  lastPlayedQuiz?: Record<string, string>;
   showPromotion?: boolean;
+  email?: string;
 }
 
 interface UserContextType {
   user: User | null;
-  login: (username: string, password: string) => boolean;
-  logout: () => void;
-  register: (username: string, password: string) => boolean;
-  addPoints: (points: number) => void;
-  exchangePoints: (points: number, cashNumber: string) => boolean;
-  updateCashNumber: (cashNumber: string) => void;
-  updateAvatar: (avatar: string) => void;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<boolean>;
+  logout: () => Promise<void>;
+  register: (email: string, password: string, username: string) => Promise<boolean>;
+  addPoints: (points: number) => Promise<void>;
+  exchangePoints: (points: number, cashNumber: string) => Promise<boolean>;
+  updateCashNumber: (cashNumber: string) => Promise<void>;
+  updateAvatar: (avatar: string) => Promise<void>;
   canPlayQuizCategory: (categoryId: string) => boolean;
-  updateLastPlayedQuiz: (categoryId: string) => void;
+  updateLastPlayedQuiz: (categoryId: string) => Promise<void>;
   getTimeRemaining: (categoryId: string) => string;
-  hidePromotion: () => void;
-  getAllUsers: () => User[];
-  getUsersCount: () => number;
+  hidePromotion: () => Promise<void>;
+  getAllUsers: () => Promise<User[]>;
+  getUsersCount: () => Promise<number>;
   isAdmin: () => boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-// Mock users data - in a real app, this would come from a database
-const mockUsers: Record<string, { username: string; password: string; points: number; cashNumber: string; avatar?: string; lastPlayedQuiz?: Record<string, string>; showPromotion?: boolean }> = {
-  'user1': { username: 'يوسف هشام', password: '123456', points: 100, cashNumber: '01007570190', avatar: 'https://i.pravatar.cc/150?img=11', showPromotion: true },
-  'user2': { username: 'احمد', password: '123456', points: 25, cashNumber: '01234567890', avatar: 'https://i.pravatar.cc/150?img=1', showPromotion: true },
-  'user3': { username: 'محمد', password: '123456', points: 18, cashNumber: '01098765432', avatar: 'https://i.pravatar.cc/150?img=2', showPromotion: true },
-  'user4': { username: 'سارة', password: '123456', points: 32, cashNumber: '01112223344', avatar: 'https://i.pravatar.cc/150?img=3', showPromotion: true },
-  'user5': { username: 'فاطمة', password: '123456', points: 47, cashNumber: '01098765432', avatar: 'https://i.pravatar.cc/150?img=4', showPromotion: true },
-  'user6': { username: 'عمر', password: '123456', points: 55, cashNumber: '01112223344', avatar: 'https://i.pravatar.cc/150?img=5', showPromotion: true },
-  'user7': { username: 'خالد', password: '123456', points: 29, cashNumber: '01098765432', avatar: 'https://i.pravatar.cc/150?img=6', showPromotion: true },
-  'user8': { username: 'ليلى', password: '123456', points: 37, cashNumber: '01112223344', avatar: 'https://i.pravatar.cc/150?img=7', showPromotion: true },
-  'user9': { username: 'حسن', password: '123456', points: 62, cashNumber: '01098765432', avatar: 'https://i.pravatar.cc/150?img=8', showPromotion: true },
-  'user10': { username: 'نور', password: '123456', points: 41, cashNumber: '01112223344', avatar: 'https://i.pravatar.cc/150?img=9', showPromotion: true },
-};
-
-// تحديد المستخدم الذي لديه صلاحيات المسؤول
-const ADMIN_USER_ID = 'user1'; // يوسف هشام هو المسؤول
+// Special admin user ID (you can change this to a specific Firebase UID later)
+const ADMIN_EMAIL = "admin@yomaquiz.com";
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Load user from localStorage on mount
+  // Listen for authentication state changes
   useEffect(() => {
-    const storedUser = localStorage.getItem('yoma-user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error('Failed to parse stored user', e);
-        localStorage.removeItem('yoma-user');
+    const unsubscribe = firebaseAuth.onAuthStateChanged(async (firebaseUser) => {
+      setLoading(true);
+      if (firebaseUser) {
+        try {
+          // Get user profile from database
+          const userProfile = await firebaseDB.getUserProfile(firebaseUser.uid);
+          if (userProfile) {
+            setUser({
+              id: firebaseUser.uid,
+              email: firebaseUser.email || undefined,
+              username: userProfile.username,
+              points: userProfile.points,
+              cashNumber: userProfile.cashNumber,
+              avatar: userProfile.avatar,
+              lastPlayedQuiz: userProfile.lastPlayedQuiz || {},
+              showPromotion: userProfile.showPromotion
+            });
+          } else {
+            console.error("User profile not found in database");
+            await firebaseAuth.logout();
+            setUser(null);
+          }
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+          toast.error("حدث خطأ أثناء تحميل بيانات المستخدم");
+        }
+      } else {
+        setUser(null);
       }
-    }
-  }, []);
+      setLoading(false);
+    });
 
-  // Save user to localStorage when it changes
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem('yoma-user', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('yoma-user');
-    }
-  }, [user]);
+    return () => unsubscribe();
+  }, []);
 
   // تحقق إذا كان يمكن للمستخدم لعب فئة معينة بناءً على وقت الانتظار
   const canPlayQuizCategory = (categoryId: string) => {
@@ -86,29 +92,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     // التحقق من مرور 24 ساعة
     return hoursDiff >= 24;
-  };
-
-  // تحديث وقت آخر لعب للفئة
-  const updateLastPlayedQuiz = (categoryId: string) => {
-    if (user) {
-      const updatedUser = {
-        ...user,
-        lastPlayedQuiz: {
-          ...user.lastPlayedQuiz,
-          [categoryId]: new Date().toISOString()
-        }
-      };
-      
-      setUser(updatedUser);
-      
-      // تحديث في mockUsers أيضًا
-      if (mockUsers[user.id]) {
-        mockUsers[user.id].lastPlayedQuiz = {
-          ...mockUsers[user.id].lastPlayedQuiz,
-          [categoryId]: new Date().toISOString()
-        };
-      }
-    }
   };
 
   // حساب الوقت المتبقي لإعادة اللعب
@@ -129,77 +112,56 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return `متاح بعد ${hoursRemaining} ساعة`;
   };
 
-  const login = (username: string, password: string) => {
-    // Find user by username
-    const userId = Object.keys(mockUsers).find(id => mockUsers[id].username === username);
-    
-    if (userId && mockUsers[userId].password === password) {
-      setUser({
-        id: userId,
-        username: mockUsers[userId].username,
-        points: mockUsers[userId].points,
-        cashNumber: mockUsers[userId].cashNumber,
-        avatar: mockUsers[userId].avatar,
-        lastPlayedQuiz: mockUsers[userId].lastPlayedQuiz || {},
-        showPromotion: mockUsers[userId].showPromotion
-      });
+  const login = async (email: string, password: string) => {
+    try {
+      await firebaseAuth.login(email, password);
       toast.success('تم تسجيل الدخول بنجاح');
       return true;
-    } else {
-      toast.error('اسم المستخدم أو كلمة المرور غير صحيحة');
+    } catch (error: any) {
+      const errorMessage = error.code === 'auth/invalid-credential' 
+        ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
+        : 'حدث خطأ أثناء تسجيل الدخول';
+      toast.error(errorMessage);
       return false;
     }
   };
 
-  const register = (username: string, password: string) => {
-    // Check if username already exists
-    const usernameExists = Object.values(mockUsers).some(user => user.username === username);
-    
-    if (usernameExists) {
-      toast.error('اسم المستخدم موجود بالفعل');
-      return false;
-    }
-
-    // Create new user ID that's unique
-    const newUserId = `user${Object.keys(mockUsers).length + 1}`;
-    
-    // Add new user to mockUsers
-    mockUsers[newUserId] = {
-      username,
-      password,
-      points: 0,
-      cashNumber: '',
-      showPromotion: true
-    };
-    
-    // Log in with new user
-    setUser({
-      id: newUserId,
-      username,
-      points: 0,
-      cashNumber: '',
-      lastPlayedQuiz: {},
-      showPromotion: true
-    });
-    
-    toast.success('تم إنشاء الحساب وتسجيل الدخول بنجاح');
-    return true;
-  };
-
-  const logout = () => {
-    setUser(null);
-    toast.info('تم تسجيل الخروج');
-  };
-
-  const addPoints = (points: number) => {
-    if (user) {
-      const newPoints = user.points + points;
-      setUser({ ...user, points: newPoints });
-      
-      // Update mock data
-      if (mockUsers[user.id]) {
-        mockUsers[user.id].points = newPoints;
+  const register = async (email: string, password: string, username: string) => {
+    try {
+      await firebaseAuth.register(email, password, username);
+      toast.success('تم إنشاء الحساب وتسجيل الدخول بنجاح');
+      return true;
+    } catch (error: any) {
+      let errorMessage = 'حدث خطأ أثناء إنشاء الحساب';
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'البريد الإلكتروني مستخدم بالفعل';
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'كلمة المرور ضعيفة جدًا';
       }
+      toast.error(errorMessage);
+      return false;
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await firebaseAuth.logout();
+      toast.info('تم تسجيل الخروج');
+    } catch (error) {
+      console.error("Error logging out:", error);
+      toast.error('حدث خطأ أثناء تسجيل الخروج');
+    }
+  };
+
+  const addPoints = async (points: number) => {
+    if (!user) return;
+    
+    try {
+      await firebaseDB.updatePoints(user.id, points);
+      setUser({
+        ...user,
+        points: user.points + points
+      });
       
       toast.success(`تم إضافة ${points} نقطة إلى رصيدك`);
       
@@ -210,10 +172,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           { duration: 10000 }
         );
       }
+    } catch (error) {
+      console.error("Error adding points:", error);
+      toast.error('حدث خطأ أثناء إضافة النقاط');
     }
   };
 
-  const exchangePoints = (points: number, cashNumber: string) => {
+  const exchangePoints = async (points: number, cashNumber: string) => {
     if (!user) return false;
     
     if (user.points < points) {
@@ -226,95 +191,125 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return false;
     }
     
-    const newPoints = user.points - points;
-    setUser({ ...user, points: newPoints, cashNumber });
-    
-    // Update mock data
-    if (mockUsers[user.id]) {
-      mockUsers[user.id].points = newPoints;
-      mockUsers[user.id].cashNumber = cashNumber;
-    }
-    
-    const cashAmount = (points / 1000) * 100;
-    toast.success(`تم استبدال ${points} نقطة بمبلغ ${cashAmount} جنيه. سيتم إرسال المبلغ إلى الرقم ${cashNumber}`);
-    
-    // إرسال رسالة استبدال النقاط إلى رقم الواتساب
     try {
-      const cashoutMessage = `استبدال نقاط جديد:\nالمستخدم: ${user.username}\nالنقاط: ${points}\nالمبلغ: ${cashAmount} جنيه\nرقم الاستلام: ${cashNumber}`;
-      const whatsappUrl = `https://wa.me/01007570190?text=${encodeURIComponent(cashoutMessage)}`;
+      await firebaseDB.updateUserProfile(user.id, {
+        points: user.points - points,
+        cashNumber
+      });
       
-      window.open(whatsappUrl, '_blank');
+      setUser({
+        ...user,
+        points: user.points - points,
+        cashNumber
+      });
+      
+      const cashAmount = (points / 1000) * 100;
+      toast.success(`تم استبدال ${points} نقطة بمبلغ ${cashAmount} جنيه. سيتم إرسال المبلغ إلى الرقم ${cashNumber}`);
+      
+      // إرسال رسالة استبدال النقاط إلى رقم الواتساب
+      try {
+        const cashoutMessage = `استبدال نقاط جديد:\nالمستخدم: ${user.username}\nالنقاط: ${points}\nالمبلغ: ${cashAmount} جنيه\nرقم الاستلام: ${cashNumber}`;
+        const whatsappUrl = `https://wa.me/01007570190?text=${encodeURIComponent(cashoutMessage)}`;
+        
+        window.open(whatsappUrl, '_blank');
+      } catch (error) {
+        console.error("Failed to send WhatsApp notification", error);
+      }
+      
+      return true;
     } catch (error) {
-      console.error("Failed to send WhatsApp notification", error);
+      console.error("Error exchanging points:", error);
+      toast.error('حدث خطأ أثناء استبدال النقاط');
+      return false;
     }
+  };
+
+  const updateCashNumber = async (cashNumber: string) => {
+    if (!user) return;
     
-    return true;
-  };
-
-  const updateCashNumber = (cashNumber: string) => {
-    if (user) {
+    try {
+      await firebaseDB.updateUserProfile(user.id, { cashNumber });
       setUser({ ...user, cashNumber });
-      
-      // Update mock data
-      if (mockUsers[user.id]) {
-        mockUsers[user.id].cashNumber = cashNumber;
-      }
-      
       toast.success('تم تحديث رقم الهاتف بنجاح');
+    } catch (error) {
+      console.error("Error updating cash number:", error);
+      toast.error('حدث خطأ أثناء تحديث رقم الهاتف');
     }
   };
 
-  const updateAvatar = (avatar: string) => {
-    if (user) {
+  const updateAvatar = async (avatar: string) => {
+    if (!user) return;
+    
+    try {
+      await firebaseDB.updateUserProfile(user.id, { avatar });
       setUser({ ...user, avatar });
-      
-      // Update mock data
-      if (mockUsers[user.id]) {
-        mockUsers[user.id].avatar = avatar;
-      }
-      
       toast.success('تم تحديث الصورة الشخصية بنجاح');
+    } catch (error) {
+      console.error("Error updating avatar:", error);
+      toast.error('حدث خطأ أثناء تحديث الصورة الشخصية');
     }
   };
   
-  const hidePromotion = () => {
-    if (user) {
+  const hidePromotion = async () => {
+    if (!user) return;
+    
+    try {
+      await firebaseDB.updateUserProfile(user.id, { showPromotion: false });
       setUser({ ...user, showPromotion: false });
+    } catch (error) {
+      console.error("Error hiding promotion:", error);
+    }
+  };
+
+  const updateLastPlayedQuiz = async (categoryId: string) => {
+    if (!user) return;
+    
+    try {
+      await firebaseDB.updateLastPlayedQuiz(user.id, categoryId);
       
-      // Update mock data
-      if (mockUsers[user.id]) {
-        mockUsers[user.id].showPromotion = false;
-      }
+      setUser({
+        ...user,
+        lastPlayedQuiz: {
+          ...user.lastPlayedQuiz,
+          [categoryId]: new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      console.error("Error updating last played quiz:", error);
     }
   };
 
   // وظائف إدارة المستخدمين للمسؤول
-  const getAllUsers = () => {
-    // تحويل مجموعة المستخدمين من كائن إلى مصفوفة
-    return Object.keys(mockUsers).map(id => ({
-      id,
-      username: mockUsers[id].username,
-      points: mockUsers[id].points,
-      cashNumber: mockUsers[id].cashNumber,
-      avatar: mockUsers[id].avatar,
-      lastPlayedQuiz: mockUsers[id].lastPlayedQuiz || {},
-      showPromotion: mockUsers[id].showPromotion
-    }));
+  const getAllUsers = async () => {
+    try {
+      return await firebaseDB.getAllUsers();
+    } catch (error) {
+      console.error("Error getting all users:", error);
+      toast.error('حدث خطأ أثناء جلب بيانات المستخدمين');
+      return [];
+    }
   };
 
   // الحصول على عدد المستخدمين
-  const getUsersCount = () => {
-    return Object.keys(mockUsers).length;
+  const getUsersCount = async () => {
+    try {
+      const users = await firebaseDB.getAllUsers();
+      return users.length;
+    } catch (error) {
+      console.error("Error getting users count:", error);
+      return 0;
+    }
   };
 
   // التحقق مما إذا كان المستخدم الحالي هو المسؤول
   const isAdmin = () => {
-    return user?.id === ADMIN_USER_ID;
+    return user?.email === ADMIN_EMAIL;
   };
 
   return (
     <UserContext.Provider value={{ 
       user, 
+      loading,
       login, 
       logout, 
       register, 

@@ -7,10 +7,10 @@ import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Login: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const { user, login } = useUser();
+  const { user, login, loading } = useUser();
   const navigate = useNavigate();
 
   // If user is already logged in, redirect to dashboard
@@ -20,11 +20,11 @@ const Login: React.FC = () => {
     }
   }, [user, navigate]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = login(username, password);
+    const success = await login(email, password);
     if (success) {
-      toast.success(`مرحباً بك ${username}! جاري تحويلك إلى لوحة التحكم...`);
+      toast.success(`تم تسجيل الدخول بنجاح! جاري تحويلك إلى لوحة التحكم...`);
       navigate('/dashboard');
     }
   };
@@ -48,16 +48,16 @@ const Login: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="username" className="block text-sm font-medium">
-                اسم المستخدم
+              <label htmlFor="email" className="block text-sm font-medium">
+                البريد الإلكتروني
               </label>
               <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-3 py-2 bg-background border rounded-md focus:ring-1 focus:ring-primary focus:border-primary outline-none"
-                placeholder="أدخل اسم المستخدم"
+                placeholder="أدخل البريد الإلكتروني"
                 required
               />
             </div>
@@ -93,8 +93,9 @@ const Login: React.FC = () => {
             <button
               type="submit"
               className="w-full py-2 px-4 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
+              disabled={loading}
             >
-              تسجيل الدخول
+              {loading ? 'جاري التحميل...' : 'تسجيل الدخول'}
             </button>
           </form>
 

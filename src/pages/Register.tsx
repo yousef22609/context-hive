@@ -7,12 +7,13 @@ import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Register: React.FC = () => {
+  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState('');
-  const { user, register } = useUser();
+  const { user, register, loading } = useUser();
   const navigate = useNavigate();
 
   // If user is already logged in, redirect to dashboard
@@ -22,7 +23,7 @@ const Register: React.FC = () => {
     }
   }, [user, navigate]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (password !== confirmPassword) {
@@ -30,7 +31,12 @@ const Register: React.FC = () => {
       return;
     }
     
-    const success = register(username, password);
+    if (password.length < 6) {
+      setPasswordError('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+      return;
+    }
+    
+    const success = await register(email, password, username);
     if (success) {
       toast.success(`مرحباً بك ${username}! تم إنشاء حسابك بنجاح. جاري تحويلك إلى لوحة التحكم...`);
       navigate('/dashboard');
@@ -56,6 +62,21 @@ const Register: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm font-medium">
+                البريد الإلكتروني
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3 py-2 bg-background border rounded-md focus:ring-1 focus:ring-primary focus:border-primary outline-none"
+                placeholder="أدخل البريد الإلكتروني"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
               <label htmlFor="username" className="block text-sm font-medium">
                 اسم المستخدم
               </label>
@@ -79,7 +100,10 @@ const Register: React.FC = () => {
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setPasswordError('');
+                  }}
                   className="w-full pl-3 pr-10 py-2 bg-background border rounded-md focus:ring-1 focus:ring-primary focus:border-primary outline-none"
                   placeholder="أدخل كلمة المرور"
                   required
@@ -137,8 +161,9 @@ const Register: React.FC = () => {
             <button
               type="submit"
               className="w-full py-2 px-4 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
+              disabled={loading}
             >
-              إنشاء حساب
+              {loading ? 'جاري التحميل...' : 'إنشاء حساب'}
             </button>
           </form>
 
