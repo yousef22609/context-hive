@@ -1,40 +1,39 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useUser } from '../context/UserContext';
-import Layout from '../components/Layout';
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { toast } from 'sonner';
+import Layout from '../components/Layout';
+import '../firebaseConfig'; // استيراد تهيئة Firebase
 
 const Login: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const { user, login } = useUser();
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const auth = getAuth();
 
-  // If user is already logged in, redirect to dashboard
   useEffect(() => {
-    if (user) {
-      navigate('/dashboard');
-    }
-  }, [user, navigate]);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigate('/dashboard');
+      }
+    });
+    return () => unsubscribe();
+  }, [auth, navigate]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = login(username, password);
-    if (success) {
-      toast.success(`مرحباً بك ${username}! جاري تحويلك إلى لوحة التحكم...`);
+    setError('');
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      toast.success('تم تسجيل الدخول بنجاح!');
       navigate('/dashboard');
+    } catch (err) {
+      setError('فشل تسجيل الدخول. تحقق من البريد وكلمة المرور.');
     }
   };
-
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  // If user is already logged in, don't render the login page
-  if (user) return null;
 
   return (
     <Layout>
@@ -46,18 +45,20 @@ const Login: React.FC = () => {
             <p className="text-muted-foreground">أدخل بياناتك للوصول إلى حسابك</p>
           </div>
 
+          {error && <p className="text-red-500 text-center">{error}</p>}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="username" className="block text-sm font-medium">
-                اسم المستخدم
+              <label htmlFor="email" className="block text-sm font-medium">
+                البريد الإلكتروني
               </label>
               <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-3 py-2 bg-background border rounded-md focus:ring-1 focus:ring-primary focus:border-primary outline-none"
-                placeholder="أدخل اسم المستخدم"
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3 py-2 border rounded-md focus:ring-1 focus:ring-primary focus:border-primary outline-none"
+                placeholder="أدخل بريدك الإلكتروني"
                 required
               />
             </div>
@@ -72,27 +73,23 @@ const Login: React.FC = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-3 pr-10 py-2 bg-background border rounded-md focus:ring-1 focus:ring-primary focus:border-primary outline-none"
+                  className="w-full px-3 py-2 border rounded-md focus:ring-1 focus:ring-primary focus:border-primary outline-none"
                   placeholder="أدخل كلمة المرور"
                   required
                 />
                 <button
                   type="button"
-                  onClick={toggleShowPassword}
+                  onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 left-0 pl-3 flex items-center"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-muted-foreground" />
-                  )}
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
             </div>
 
             <button
               type="submit"
-              className="w-full py-2 px-4 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
+              className="w-full py-2 px-4 rounded-md bg-primary text-white hover:bg-primary/90 transition"
             >
               تسجيل الدخول
             </button>
@@ -101,7 +98,7 @@ const Login: React.FC = () => {
           <div className="mt-6 text-center text-sm">
             <p>
               ليس لديك حساب؟{' '}
-              <Link to="/register" className="text-primary hover:underline">
+              <Link to="/signup" className="text-primary hover:underline">
                 إنشاء حساب جديد
               </Link>
             </p>
