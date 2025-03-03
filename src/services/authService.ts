@@ -3,33 +3,37 @@ import { toast } from 'sonner';
 import { firebaseAuth } from './firebase';
 
 export const authService = {
-  login: async (username: string, password: string): Promise<boolean> => {
+  login: async (email: string, password: string): Promise<boolean> => {
     try {
-      await firebaseAuth.login(username, password);
+      await firebaseAuth.login(email, password);
       toast.success('تم تسجيل الدخول بنجاح');
       return true;
     } catch (error: any) {
       const errorMessage = error.code === 'auth/invalid-credential' 
-        ? 'اسم المستخدم أو كلمة المرور غير صحيحة'
+        ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
         : 'حدث خطأ أثناء تسجيل الدخول';
       toast.error(errorMessage);
+      console.error("Login error:", error);
       return false;
     }
   },
 
-  register: async (username: string, password: string): Promise<boolean> => {
+  register: async (email: string, password: string): Promise<boolean> => {
     try {
-      await firebaseAuth.register(username, password);
+      await firebaseAuth.register(email, password);
       toast.success('تم إنشاء الحساب وتسجيل الدخول بنجاح');
       return true;
     } catch (error: any) {
       let errorMessage = 'حدث خطأ أثناء إنشاء الحساب';
       if (error.code === 'auth/email-already-in-use') {
-        errorMessage = 'اسم المستخدم مستخدم بالفعل';
+        errorMessage = 'البريد الإلكتروني مستخدم بالفعل';
       } else if (error.code === 'auth/weak-password') {
         errorMessage = 'كلمة المرور ضعيفة جدًا';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'البريد الإلكتروني غير صالح';
       }
       toast.error(errorMessage);
+      console.error("Register error:", error);
       return false;
     }
   },

@@ -12,13 +12,12 @@ import { getDatabase, ref, set, get, update } from "firebase/database";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDwegFbUhcsS6IMg8imeP4a_uC2EDrJAZs",
-  authDomain: "web-yoma.firebaseapp.com",
-  databaseURL: "https://web-yoma-default-rtdb.firebaseio.com",
-  projectId: "web-yoma",
-  storageBucket: "web-yoma.appspot.com",
-  messagingSenderId: "886100277983",
-  appId: "1:886100277983:web:1b535409c6b50f7260076a"
+  apiKey: "AIzaSyAxr_6LmjVgzrT34en3LGCSM9wxFUJtkoE",
+  authDomain: "yoma-3390d.firebaseapp.com",
+  projectId: "yoma-3390d",
+  storageBucket: "yoma-3390d.firebasestorage.app",
+  messagingSenderId: "387090327193",
+  appId: "1:387090327193:web:2540dc9f62b8f4a499ba08"
 };
 
 // Initialize Firebase
@@ -38,15 +37,13 @@ export interface UserProfile {
 
 // Firebase authentication functions
 export const firebaseAuth = {
-  // Create a new user with username and password
-  register: async (username: string, password: string) => {
+  // Create a new user with email and password
+  register: async (email: string, password: string) => {
     try {
-      // Generate an email from the username
-      const email = `${username}@yoma-app.com`;
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       // Create user profile in database
       await set(ref(database, `users/${userCredential.user.uid}`), {
-        username,
+        username: email.split('@')[0], // Use part of email as username
         points: 0,
         cashNumber: '',
         showPromotion: true,
@@ -59,11 +56,9 @@ export const firebaseAuth = {
     }
   },
 
-  // Sign in existing user with username and password
-  login: async (username: string, password: string) => {
+  // Sign in existing user with email and password
+  login: async (email: string, password: string) => {
     try {
-      // Convert username to email format
-      const email = `${username}@yoma-app.com`;
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       return userCredential.user;
     } catch (error) {

@@ -18,6 +18,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       if (firebaseUser) {
         try {
+          console.log("Firebase user authenticated:", firebaseUser.uid);
           // Get user profile from database
           const userProfile = await firebaseDB.getUserProfile(firebaseUser.uid);
           if (userProfile) {
@@ -55,9 +56,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loading,
     
     // Authentication methods
-    login: (username, password) => authService.login(username, password),
+    login: (email, password) => authService.login(email, password),
     logout: () => authService.logout(),
-    register: (username, password) => authService.register(username, password),
+    register: (email, password) => authService.register(email, password),
     
     // User data methods
     addPoints: async (points) => {

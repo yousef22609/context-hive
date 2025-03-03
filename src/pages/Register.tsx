@@ -7,7 +7,7 @@ import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Register: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -25,6 +25,13 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error('يرجى إدخال بريد إلكتروني صالح');
+      return;
+    }
+    
     if (password !== confirmPassword) {
       setPasswordError('كلمتا المرور غير متطابقتين');
       return;
@@ -35,10 +42,10 @@ const Register: React.FC = () => {
       return;
     }
     
-    // Call register with just username and password (updated function)
-    const success = await register(username, password);
+    console.log("Attempting registration with:", email);
+    const success = await register(email, password);
     if (success) {
-      toast.success(`مرحباً بك ${username}! تم إنشاء حسابك بنجاح. جاري تحويلك إلى لوحة التحكم...`);
+      toast.success(`مرحباً بك! تم إنشاء حسابك بنجاح. جاري تحويلك إلى لوحة التحكم...`);
       navigate('/dashboard');
     }
   };
@@ -62,16 +69,16 @@ const Register: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="username" className="block text-sm font-medium">
-                اسم المستخدم
+              <label htmlFor="email" className="block text-sm font-medium">
+                البريد الإلكتروني
               </label>
               <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-3 py-2 bg-background border rounded-md focus:ring-1 focus:ring-primary focus:border-primary outline-none"
-                placeholder="أدخل اسم المستخدم"
+                placeholder="أدخل البريد الإلكتروني"
                 required
               />
             </div>

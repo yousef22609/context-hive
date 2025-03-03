@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
@@ -21,7 +22,16 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error('يرجى إدخال بريد إلكتروني صالح');
+      return;
+    }
+    
     try {
+      console.log("Attempting login with:", email);
       const success = await login(email, password);
       if (success) {
         toast.success('تم تسجيل الدخول بنجاح! جاري تحويلك إلى لوحة التحكم...');
@@ -30,6 +40,7 @@ const Login: React.FC = () => {
         toast.error('فشل في تسجيل الدخول، يرجى التحقق من بياناتك.');
       }
     } catch (error) {
+      console.error("Login error:", error);
       toast.error('حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى.');
     }
   };
@@ -48,7 +59,7 @@ const Login: React.FC = () => {
           <div className="text-center mb-6">
             <LogIn className="h-12 w-12 text-primary mx-auto mb-2" />
             <h1 className="text-2xl font-bold">تسجيل الدخول</h1>
-            <p className="text-muted-foreground">أدخل بياناتك للوصول إلى حسابك</p>
+            <p className="text-muted-foreground">أدخل بريدك الإلكتروني وكلمة المرور للوصول إلى حسابك</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

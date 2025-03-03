@@ -17,7 +17,7 @@ export interface UserContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
-  register: (username: string, password: string) => Promise<boolean>;
+  register: (email: string, password: string) => Promise<boolean>;
   addPoints: (points: number) => Promise<void>;
   exchangePoints: (points: number, cashNumber: string) => Promise<boolean>;
   updateCashNumber: (cashNumber: string) => Promise<void>;
