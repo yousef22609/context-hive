@@ -17,8 +17,7 @@ const firebaseConfig = {
   projectId: "yoma-3390d",
   storageBucket: "yoma-3390d.firebasestorage.app",
   messagingSenderId: "387090327193",
-  appId: "1:387090327193:web:2540dc9f62b8f4a499ba08",
-  databaseURL: "https://yoma-3390d-default-rtdb.firebaseio.com"
+  appId: "1:387090327193:web:2540dc9f62b8f4a499ba08"
 };
 
 // Initialize Firebase
