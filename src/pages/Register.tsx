@@ -35,6 +35,7 @@ const Register: React.FC = () => {
       return;
     }
     
+    // Call register with just username and password (updated function)
     const success = await register(username, password);
     if (success) {
       toast.success(`مرحباً بك ${username}! تم إنشاء حسابك بنجاح. جاري تحويلك إلى لوحة التحكم...`);
