@@ -22,7 +22,21 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Check if Firebase app is already initialized to prevent duplicate initialization
+let app;
+try {
+  app = initializeApp(firebaseConfig);
+} catch (error: any) {
+  if (error.code === 'app/duplicate-app') {
+    // App already exists, get the existing one
+    console.log("Firebase app already initialized, using existing app");
+    app = initializeApp();
+  } else {
+    console.error("Firebase initialization error:", error);
+    throw error;
+  }
+}
+
 const auth = getAuth(app);
 const database = getDatabase(app);
 
