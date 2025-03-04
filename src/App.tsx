@@ -20,9 +20,9 @@ import UserProfile from "./pages/UserProfile";
 
 const queryClient = new QueryClient();
 
-// Protected route component that redirects to login if not authenticated
+// Protected route component but modified to not require explicit login
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useUser();
+  const { user, loading, loginAnonymously } = useUser();
   
   // Show loading state
   if (loading) {
@@ -33,9 +33,12 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
   
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  // Automatically login anonymously if not logged in
+  React.useEffect(() => {
+    if (!user && !loading) {
+      loginAnonymously();
+    }
+  }, [user, loading]);
   
   return <>{children}</>;
 };
@@ -52,18 +55,13 @@ const AppRoutes = () => {
     );
   }
   
-  // If user is logged in and tries to access the home page, redirect to dashboard
-  if (user && window.location.pathname === "/") {
-    return <Navigate to="/dashboard" replace />;
-  }
-  
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       
-      {/* Protected routes */}
+      {/* All routes protected but with automatic anonymous login */}
       <Route path="/play" element={
         <ProtectedRoute>
           <Play />

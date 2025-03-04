@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import UserContext from './userContext';
 import { User, UserContextType } from './types';
 import { ADMIN_EMAIL } from './constants';
@@ -17,7 +17,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useSupabaseAuth(setUser, setLoading);
 
   // Get authentication methods
-  const { login, register, logout } = useAuth(setUser, setLoading);
+  const { login, register, logout, loginAnonymously } = useAuth(setUser, setLoading);
 
   // Get user data methods
   const {
@@ -32,6 +32,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Get admin data methods
   const { getAllUsers, getUsersCount } = useAdminData();
 
+  // Auto-login anonymously if no user is detected
+  useEffect(() => {
+    const handleAnonymousLogin = async () => {
+      if (!loading && !user) {
+        await loginAnonymously();
+      }
+    };
+    
+    handleAnonymousLogin();
+  }, [loading]);
+
   // Context value with all user functions
   const contextValue: UserContextType = {
     user,
@@ -43,6 +54,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     login,
     logout,
     register,
+    loginAnonymously,
     
     // User data methods
     addPoints,

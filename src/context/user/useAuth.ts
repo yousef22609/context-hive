@@ -68,6 +68,38 @@ export const useAuth = (
     }
   };
 
+  const loginAnonymously = async (): Promise<boolean> => {
+    try {
+      const { data, error } = await supabase.auth.signInAnonymously();
+      
+      if (error) throw error;
+      
+      if (data.user) {
+        // Create anonymous user profile
+        const { error: profileError } = await supabase
+          .from('user_profiles')
+          .insert({
+            id: data.user.id,
+            username: `زائر_${Math.floor(Math.random() * 10000)}`,
+            points: 0,
+            cash_number: '',
+            show_promotion: true,
+            last_played_quiz: {}
+          });
+          
+        if (profileError) throw profileError;
+        
+        return true;
+      }
+      
+      return false;
+    } catch (error: any) {
+      console.error("Anonymous login error:", error);
+      toast.error('حدث خطأ أثناء تسجيل الدخول كزائر');
+      return false;
+    }
+  };
+
   const logout = async (): Promise<void> => {
     try {
       await supabase.auth.signOut();
@@ -82,6 +114,7 @@ export const useAuth = (
   return {
     login,
     register,
-    logout
+    logout,
+    loginAnonymously
   };
 };

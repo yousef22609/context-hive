@@ -18,39 +18,22 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/dashboard'); // Navigate to dashboard instead of login
   };
-
-  // If the user is not logged in and not on login or register page, redirect to login
-  React.useEffect(() => {
-    if (!user && 
-        location.pathname !== '/login' && 
-        location.pathname !== '/register' && 
-        location.pathname !== '/') {
-      navigate('/login');
-    }
-  }, [user, location.pathname, navigate]);
 
   return (
     <div className="flex flex-col min-h-screen" dir="rtl">
       <AnimatedBackground />
       <header className="py-4 px-6 z-10 relative">
         <div className="mx-auto max-w-7xl flex justify-between items-center">
-          {user ? (
-            <Link to="/dashboard" className="flex items-center">
-              <Star className="h-6 w-6 text-primary animate-star-glow mr-2" />
-              <h1 className="text-xl font-bold">يوما كويز</h1>
-            </Link>
-          ) : (
-            <Link to="/" className="flex items-center">
-              <Star className="h-6 w-6 text-primary animate-star-glow mr-2" />
-              <h1 className="text-xl font-bold">يوما كويز</h1>
-            </Link>
-          )}
+          <Link to="/dashboard" className="flex items-center">
+            <Star className="h-6 w-6 text-primary animate-star-glow mr-2" />
+            <h1 className="text-xl font-bold">يوما كويز</h1>
+          </Link>
           
           <nav>
             <ul className="flex items-center space-x-4 space-x-reverse rtl:space-x-reverse">
-              {user ? (
+              {user && (
                 <>
                   <li>
                     <Link to="/dashboard" className={`link-hover ${location.pathname === '/dashboard' ? 'text-primary font-medium' : ''}`}>
@@ -88,17 +71,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     </button>
                   </li>
                 </>
-              ) : (
-                location.pathname !== '/login' && location.pathname !== '/register' ? (
-                  <>
-                    <li>
-                      <Link to="/login" className="btn-secondary">تسجيل الدخول</Link>
-                    </li>
-                    <li>
-                      <Link to="/register" className="btn-primary">إنشاء حساب</Link>
-                    </li>
-                  </>
-                ) : null
               )}
             </ul>
           </nav>

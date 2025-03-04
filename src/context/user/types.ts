@@ -20,6 +20,7 @@ export interface UserContextType {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   register: (email: string, password: string) => Promise<boolean>;
+  loginAnonymously: () => Promise<boolean>;
   addPoints: (points: number) => Promise<void>;
   exchangePoints: (points: number, cashNumber: string) => Promise<boolean>;
   updateCashNumber: (cashNumber: string) => Promise<void>;
