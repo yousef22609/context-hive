@@ -5,12 +5,13 @@ import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '../services/supabase';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const { user, login, loading } = useUser();
+  const { user, setUser, loading, setLoading } = useUser();
   const navigate = useNavigate();
 
   // If user is already logged in, redirect to dashboard
@@ -31,17 +32,73 @@ const Login: React.FC = () => {
     }
     
     try {
+      setLoading(true);
       console.log("Attempting login with:", email);
-      const success = await login(email, password);
-      if (success) {
-        toast.success('تم تسجيل الدخول بنجاح! جاري تحويلك إلى لوحة التحكم...');
-        navigate('/dashboard');
-      } else {
-        toast.error('فشل في تسجيل الدخول، يرجى التحقق من بياناتك.');
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) {
+        throw error;
       }
-    } catch (error) {
+      
+      if (data.user) {
+        toast.success('تم تسجيل الدخول بنجاح! جاري تحويلك إلى لوحة التحكم...');
+        
+        // Get user profile from Supabase or create one if it doesn't exist
+        const { data: profileData } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+          
+        if (profileData) {
+          setUser({
+            id: data.user.id,
+            email: data.user.email,
+            username: profileData.username || data.user.email?.split('@')[0] || '',
+            points: profileData.points || 0,
+            cashNumber: profileData.cash_number || '',
+            avatar: profileData.avatar,
+            lastPlayedQuiz: profileData.last_played_quiz || {},
+            showPromotion: profileData.show_promotion
+          });
+        } else {
+          // Create new profile
+          const newProfile = {
+            id: data.user.id,
+            username: data.user.email?.split('@')[0] || '',
+            points: 0,
+            cash_number: '',
+            show_promotion: true,
+            last_played_quiz: {}
+          };
+          
+          await supabase.from('user_profiles').insert(newProfile);
+          
+          setUser({
+            id: data.user.id,
+            email: data.user.email,
+            username: newProfile.username,
+            points: newProfile.points,
+            cashNumber: newProfile.cash_number,
+            lastPlayedQuiz: newProfile.last_played_quiz,
+            showPromotion: newProfile.show_promotion
+          });
+        }
+        
+        navigate('/dashboard');
+      }
+    } catch (error: any) {
       console.error("Login error:", error);
-      toast.error('حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى.');
+      const errorMessage = error.message === 'Invalid login credentials'
+        ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
+        : 'حدث خطأ أثناء تسجيل الدخول';
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 

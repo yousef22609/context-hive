@@ -1,5 +1,5 @@
 
-import { User as FirebaseUser } from 'firebase/auth';
+import { User as SupabaseUser } from '@supabase/supabase-js';
 
 export interface User {
   id: string;
@@ -15,6 +15,8 @@ export interface User {
 export interface UserContextType {
   user: User | null;
   loading: boolean;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   register: (email: string, password: string) => Promise<boolean>;
