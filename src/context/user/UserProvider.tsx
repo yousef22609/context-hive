@@ -348,13 +348,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const getUsersCount = async (): Promise<number> => {
     try {
-      const { count, error } = await supabase
+      const { data, error } = await supabase
         .from('user_profiles')
-        .count();
+        .select('*', { count: 'exact' });
         
       if (error) throw error;
       
-      return count || 0;
+      return data?.length || 0;
     } catch (error) {
       console.error("Error getting users count:", error);
       return 0;
