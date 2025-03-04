@@ -75,12 +75,15 @@ export const useAuth = (
       if (error) throw error;
       
       if (data.user) {
-        // Create anonymous user profile
+        // Generate a random username with arabic prefix
+        const randomUsername = `زائر_${Math.floor(Math.random() * 10000)}`;
+        
+        // Create anonymous user profile with better defaults
         const { error: profileError } = await supabase
           .from('user_profiles')
           .insert({
             id: data.user.id,
-            username: `زائر_${Math.floor(Math.random() * 10000)}`,
+            username: randomUsername,
             points: 0,
             cash_number: '',
             show_promotion: true,
@@ -89,6 +92,17 @@ export const useAuth = (
           
         if (profileError) throw profileError;
         
+        // Set the user in context
+        setUser({
+          id: data.user.id,
+          username: randomUsername,
+          points: 0,
+          cashNumber: '',
+          lastPlayedQuiz: {},
+          showPromotion: true
+        });
+        
+        toast.success(`مرحباً بك ${randomUsername}! 👋`);
         return true;
       }
       

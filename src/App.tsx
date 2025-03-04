@@ -10,7 +10,6 @@ import { UserProvider, useUser } from "./context/UserContext";
 // Pages
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
 import Play from "./pages/Play";
 import Dashboard from "./pages/Dashboard";
 import Leaderboard from "./pages/Leaderboard";
@@ -59,7 +58,9 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      
+      {/* Redirect register to dashboard since we're eliminating registration */}
+      <Route path="/register" element={<Navigate to="/dashboard" replace />} />
       
       {/* All routes protected but with automatic anonymous login */}
       <Route path="/play" element={
