@@ -3,16 +3,18 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { Eye, EyeOff, LogIn, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState('');
   const { user, login, loginAnonymously, loading } = useUser();
   const navigate = useNavigate();
 
@@ -25,21 +27,25 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoginError('');
     
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      toast.error('يرجى إدخال بريد إلكتروني صالح');
+      setLoginError('يرجى إدخال بريد إلكتروني صالح');
       return;
     }
     
     const success = await login(email, password);
     if (success) {
       navigate('/dashboard');
+    } else {
+      setLoginError('فشل تسجيل الدخول. تأكد من صحة البريد الإلكتروني وكلمة المرور.');
     }
   };
 
   const handleAnonymousLogin = async () => {
+    setLoginError('');
     const success = await loginAnonymously();
     if (success) {
       navigate('/dashboard');
@@ -63,6 +69,15 @@ const Login: React.FC = () => {
             <p className="text-muted-foreground">أدخل بياناتك للوصول إلى حسابك</p>
           </div>
 
+          {loginError && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                {loginError}
+              </AlertDescription>
+            </Alert>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
@@ -72,7 +87,10 @@ const Login: React.FC = () => {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setLoginError('');
+                }}
                 className="w-full"
                 placeholder="أدخل البريد الإلكتروني"
                 required
@@ -89,7 +107,10 @@ const Login: React.FC = () => {
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setLoginError('');
+                  }}
                   className="w-full"
                   placeholder="أدخل كلمة المرور"
                   required

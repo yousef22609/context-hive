@@ -16,16 +16,6 @@ export const useAuth = (
     try {
       setLoading(true);
       
-      // Create fallback user in case Supabase is not properly configured
-      const fallbackUser: User = {
-        id: generateRandomId(),
-        username: email.split('@')[0] || `مستخدم_${Math.floor(Math.random() * 10000)}`,
-        points: 100,
-        cashNumber: '',
-        lastPlayedQuiz: {},
-        showPromotion: true
-      };
-      
       // Try to authenticate with Supabase
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -34,10 +24,8 @@ export const useAuth = (
       
       if (error) {
         console.warn('Supabase auth error:', error);
-        console.log('Using fallback user instead');
-        setUser(fallbackUser);
-        toast.success(`مرحباً بك ${fallbackUser.username}! 👋`);
-        return true;
+        toast.error(error.message || 'فشل تسجيل الدخول. تأكد من صحة البريد الإلكتروني وكلمة المرور.');
+        return false;
       }
       
       if (data?.user) {
@@ -56,28 +44,18 @@ export const useAuth = (
             lastPlayedQuiz: userData.data.last_played_quiz || {},
             showPromotion: userData.data.show_promotion !== false
           });
+          
+          toast.success(`مرحباً بك ${userData.data.username || data.user.email?.split('@')[0] || 'مستخدم'}! 👋`);
+          return true;
         }
-      } else {
-        // Use fallback user if no data returned
-        setUser(fallbackUser);
       }
       
-      toast.success(`مرحباً بك! 👋`);
-      return true;
+      toast.error('حدث خطأ في تسجيل الدخول');
+      return false;
     } catch (error: any) {
       console.error("Login error:", error);
-      // Create fallback user in case of error
-      const fallbackUser: User = {
-        id: generateRandomId(),
-        username: email.split('@')[0] || `مستخدم_${Math.floor(Math.random() * 10000)}`,
-        points: 100,
-        cashNumber: '',
-        lastPlayedQuiz: {},
-        showPromotion: true
-      };
-      setUser(fallbackUser);
-      toast.info('تم تسجيل الدخول بنجاح كضيف');
-      return true;
+      toast.error('حدث خطأ في تسجيل الدخول');
+      return false;
     } finally {
       setLoading(false);
     }
@@ -96,7 +74,10 @@ export const useAuth = (
         }
       });
       
-      if (error) throw error;
+      if (error) {
+        toast.error(error.message || 'فشل إنشاء الحساب');
+        return false;
+      }
       
       if (data.user) {
         const username = email.split('@')[0];
@@ -120,10 +101,13 @@ export const useAuth = (
           lastPlayedQuiz: {},
           showPromotion: true
         });
+        
+        toast.success('تم إنشاء الحساب بنجاح');
+        return true;
       }
       
-      toast.success('تم إنشاء الحساب بنجاح');
-      return true;
+      toast.error('حدث خطأ في إنشاء الحساب');
+      return false;
     } catch (error: any) {
       console.error("Registration error:", error);
       toast.error('حدث خطأ أثناء إنشاء الحساب');
@@ -149,6 +133,7 @@ export const useAuth = (
       };
       
       setUser(newUser);
+      console.log('Created guest user:', newUser);
       toast.success(`مرحباً بك ${randomUsername}! 👋`);
       return true;
     } catch (error: any) {

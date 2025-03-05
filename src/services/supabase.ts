@@ -6,7 +6,10 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://fallback-proje
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15ZmFsbGJhY2t2YWx1ZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjQxNzY5MjAwLCJleHAiOjE5NTczMjkyMDB9.dummy_key_for_development';
 
 // Check if keys are invalid
-const useRealSupabase = supabaseUrl.includes('.supabase.co') && supabaseAnonKey.length > 20;
+const useRealSupabase = supabaseUrl.includes('.supabase.co') && 
+                         supabaseUrl !== 'https://fallback-project.supabase.co' && 
+                         supabaseAnonKey.length > 20 &&
+                         !supabaseAnonKey.includes('dummy_key_for_development');
 
 // Create a mock Supabase client if real credentials are missing
 export const supabase = useRealSupabase 
@@ -22,8 +25,28 @@ export const supabase = useRealSupabase
           } 
         }),
         signOut: async () => {},
-        signInWithPassword: async () => ({ data: null, error: { message: 'Supabase not configured' } }),
-        signUp: async () => ({ data: null, error: { message: 'Supabase not configured' } })
+        signInWithPassword: async (credentials: {email: string, password: string}) => {
+          console.log('Mock sign in attempt:', credentials.email);
+          // Always return an error with the mock client
+          return { 
+            data: null, 
+            error: { 
+              message: 'تعذر تسجيل الدخول. الرجاء استخدام خيار "الدخول كزائر" أو قم بإعداد Supabase', 
+              status: 400 
+            } 
+          };
+        },
+        signUp: async (credentials: {email: string, password: string}) => {
+          console.log('Mock sign up attempt:', credentials.email);
+          // Always return an error with the mock client
+          return { 
+            data: null, 
+            error: { 
+              message: 'تعذر إنشاء حساب. الرجاء استخدام خيار "الدخول كزائر" أو قم بإعداد Supabase', 
+              status: 400 
+            } 
+          };
+        }
       },
       from: () => ({
         select: () => ({
