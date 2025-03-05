@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { User } from './types';
+import { supabase } from '../../services/supabase';
 
 // استخدام معرف عشوائي للمستخدم
 const generateRandomId = () => {
@@ -12,57 +13,95 @@ export const useAuth = (
   setUser: React.Dispatch<React.SetStateAction<User | null>>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
-  // وظيفة لتسجيل الدخول - لن تستخدم حاليا بسبب إزالة صفحة تسجيل الدخول
+  // وظيفة لتسجيل الدخول
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      // محاكاة نجاح تسجيل الدخول
-      const userId = generateRandomId();
-      const username = email.split('@')[0];
+      setLoading(true);
       
-      const newUser: User = {
-        id: userId,
-        email: email,
-        username: username,
-        points: 0,
-        cashNumber: '',
-        lastPlayedQuiz: {},
-        showPromotion: true
-      };
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
       
-      setUser(newUser);
-      toast.success(`مرحباً بك ${username}! 👋`);
+      if (error) throw error;
+      
+      if (data.user) {
+        const userData = await supabase.from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+          
+        if (userData.data) {
+          setUser({
+            id: data.user.id,
+            email: data.user.email,
+            username: userData.data.username || data.user.email?.split('@')[0] || 'مستخدم',
+            points: userData.data.points || 0,
+            cashNumber: userData.data.cash_number || '',
+            lastPlayedQuiz: userData.data.last_played_quiz || {},
+            showPromotion: userData.data.show_promotion !== false
+          });
+        }
+      }
+      
+      toast.success(`مرحباً بك! 👋`);
       return true;
     } catch (error: any) {
       console.error("Login error:", error);
       toast.error('حدث خطأ أثناء تسجيل الدخول');
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 
-  // وظيفة التسجيل - لن تستخدم حاليا بسبب إزالة صفحة التسجيل
+  // وظيفة التسجيل
   const register = async (email: string, password: string): Promise<boolean> => {
     try {
-      // محاكاة نجاح التسجيل
-      const userId = generateRandomId();
-      const username = email.split('@')[0];
+      setLoading(true);
       
-      const newUser: User = {
-        id: userId,
-        email: email,
-        username: username,
-        points: 0,
-        cashNumber: '',
-        lastPlayedQuiz: {},
-        showPromotion: true
-      };
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: window.location.origin + '/dashboard'
+        }
+      });
       
-      setUser(newUser);
+      if (error) throw error;
+      
+      if (data.user) {
+        const username = email.split('@')[0];
+        
+        // Create profile
+        await supabase.from('profiles').insert({
+          id: data.user.id,
+          username: username,
+          points: 0,
+          cash_number: '',
+          last_played_quiz: {},
+          show_promotion: true
+        });
+        
+        setUser({
+          id: data.user.id,
+          email: data.user.email,
+          username: username,
+          points: 0,
+          cashNumber: '',
+          lastPlayedQuiz: {},
+          showPromotion: true
+        });
+      }
+      
       toast.success('تم إنشاء الحساب بنجاح');
       return true;
     } catch (error: any) {
       console.error("Registration error:", error);
       toast.error('حدث خطأ أثناء إنشاء الحساب');
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -95,6 +134,7 @@ export const useAuth = (
   // وظيفة تسجيل الخروج
   const logout = async (): Promise<void> => {
     try {
+      await supabase.auth.signOut();
       setUser(null);
       toast.info('تم تسجيل الخروج');
     } catch (error) {

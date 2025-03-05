@@ -1,6 +1,7 @@
 
 import { toast } from 'sonner';
 import { User } from './types';
+import { supabase } from '../../services/supabase';
 
 export const useUserData = (
   user: User | null,
@@ -11,6 +12,13 @@ export const useUserData = (
     
     try {
       const newPoints = user.points + points;
+      
+      // Update in database if user is authenticated
+      if (user.id && user.email) {
+        await supabase.from('profiles')
+          .update({ points: newPoints })
+          .eq('id', user.id);
+      }
       
       setUser({ ...user, points: newPoints });
       
@@ -45,6 +53,16 @@ export const useUserData = (
     try {
       const newPoints = user.points - points;
       
+      // Update in database if user is authenticated
+      if (user.id && user.email) {
+        await supabase.from('profiles')
+          .update({ 
+            points: newPoints,
+            cash_number: cashNumber 
+          })
+          .eq('id', user.id);
+      }
+      
       setUser({ ...user, points: newPoints, cashNumber });
       
       const cashAmount = (points / 1000) * 100;
@@ -72,6 +90,13 @@ export const useUserData = (
     if (!user) return;
     
     try {
+      // Update in database if user is authenticated
+      if (user.id && user.email) {
+        await supabase.from('profiles')
+          .update({ cash_number: cashNumber })
+          .eq('id', user.id);
+      }
+      
       setUser({ ...user, cashNumber });
       toast.success('تم تحديث رقم الهاتف بنجاح');
     } catch (error) {
@@ -84,6 +109,13 @@ export const useUserData = (
     if (!user) return;
     
     try {
+      // Update in database if user is authenticated
+      if (user.id && user.email) {
+        await supabase.from('profiles')
+          .update({ avatar: avatar })
+          .eq('id', user.id);
+      }
+      
       setUser({ ...user, avatar });
       toast.success('تم تحديث الصورة الشخصية بنجاح');
     } catch (error) {
@@ -96,6 +128,13 @@ export const useUserData = (
     if (!user) return;
     
     try {
+      // Update in database if user is authenticated
+      if (user.id && user.email) {
+        await supabase.from('profiles')
+          .update({ show_promotion: false })
+          .eq('id', user.id);
+      }
+      
       setUser({ ...user, showPromotion: false });
     } catch (error) {
       console.error("Error hiding promotion:", error);
@@ -108,6 +147,13 @@ export const useUserData = (
     try {
       const timestamp = new Date().toISOString();
       const lastPlayedQuiz = { ...(user.lastPlayedQuiz || {}), [categoryId]: timestamp };
+      
+      // Update in database if user is authenticated
+      if (user.id && user.email) {
+        await supabase.from('profiles')
+          .update({ last_played_quiz: lastPlayedQuiz })
+          .eq('id', user.id);
+      }
       
       setUser({
         ...user,

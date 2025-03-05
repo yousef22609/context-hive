@@ -15,12 +15,14 @@ import Leaderboard from "./pages/Leaderboard";
 import Exchange from "./pages/Exchange";
 import NotFound from "./pages/NotFound";
 import UserProfile from "./pages/UserProfile";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 const queryClient = new QueryClient();
 
-// Protected route component but modified to not require explicit login
+// Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading, loginAnonymously } = useUser();
+  const { user, loading } = useUser();
   
   // Show loading state
   if (loading) {
@@ -31,13 +33,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
   
-  // Automatically login anonymously if not logged in
-  React.useEffect(() => {
-    if (!user && !loading) {
-      console.log("No user found, logging in anonymously...");
-      loginAnonymously();
-    }
-  }, [user, loading, loginAnonymously]);
+  // If not logged in, redirect to login
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
   
   return <>{children}</>;
 };
@@ -58,11 +57,11 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       
-      {/* Redirect login and register to dashboard */}
-      <Route path="/login" element={<Navigate to="/dashboard" replace />} />
-      <Route path="/register" element={<Navigate to="/dashboard" replace />} />
+      {/* Login and Register routes */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       
-      {/* All routes protected but with automatic anonymous login */}
+      {/* Protected routes */}
       <Route path="/play" element={
         <ProtectedRoute>
           <Play />

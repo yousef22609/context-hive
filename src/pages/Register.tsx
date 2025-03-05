@@ -5,6 +5,8 @@ import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 const Register: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -42,7 +44,6 @@ const Register: React.FC = () => {
       return;
     }
     
-    console.log("Attempting registration with:", email);
     const success = await register(email, password);
     if (success) {
       toast.success(`مرحباً بك! تم إنشاء حسابك بنجاح. جاري تحويلك إلى لوحة التحكم...`);
@@ -72,14 +73,15 @@ const Register: React.FC = () => {
               <label htmlFor="email" className="block text-sm font-medium">
                 البريد الإلكتروني
               </label>
-              <input
+              <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 bg-background border rounded-md focus:ring-1 focus:ring-primary focus:border-primary outline-none"
+                className="w-full"
                 placeholder="أدخل البريد الإلكتروني"
                 required
+                dir="ltr"
               />
             </div>
 
@@ -88,7 +90,7 @@ const Register: React.FC = () => {
                 كلمة المرور
               </label>
               <div className="relative">
-                <input
+                <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
@@ -96,9 +98,10 @@ const Register: React.FC = () => {
                     setPassword(e.target.value);
                     setPasswordError('');
                   }}
-                  className="w-full pl-3 pr-10 py-2 bg-background border rounded-md focus:ring-1 focus:ring-primary focus:border-primary outline-none"
+                  className="w-full"
                   placeholder="أدخل كلمة المرور"
                   required
+                  dir="ltr"
                 />
                 <button
                   type="button"
@@ -119,7 +122,7 @@ const Register: React.FC = () => {
                 تأكيد كلمة المرور
               </label>
               <div className="relative">
-                <input
+                <Input
                   id="confirm-password"
                   type={showPassword ? 'text' : 'password'}
                   value={confirmPassword}
@@ -127,11 +130,12 @@ const Register: React.FC = () => {
                     setConfirmPassword(e.target.value);
                     setPasswordError('');
                   }}
-                  className={`w-full pl-3 pr-10 py-2 bg-background border rounded-md focus:ring-1 focus:ring-primary focus:border-primary outline-none ${
+                  className={`w-full ${
                     passwordError ? 'border-red-500' : ''
                   }`}
                   placeholder="أعد إدخال كلمة المرور"
                   required
+                  dir="ltr"
                 />
                 <button
                   type="button"
@@ -150,13 +154,13 @@ const Register: React.FC = () => {
               )}
             </div>
 
-            <button
+            <Button
               type="submit"
-              className="w-full py-2 px-4 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
+              className="w-full"
               disabled={loading}
             >
               {loading ? 'جاري التحميل...' : 'إنشاء حساب'}
-            </button>
+            </Button>
           </form>
 
           <div className="mt-6 text-center text-sm">

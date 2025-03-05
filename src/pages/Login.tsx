@@ -5,28 +5,45 @@ import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const { user, loading, loginAnonymously } = useUser();
+  const { user, login, loginAnonymously, loading } = useUser();
   const navigate = useNavigate();
 
   // If user is already logged in, redirect to dashboard
   useEffect(() => {
     if (user) {
       navigate('/dashboard');
-    } else if (!loading) {
-      // If user is not logged in and not loading, login anonymously
-      loginAnonymously();
     }
-  }, [user, loading, navigate, loginAnonymously]);
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Redirect to dashboard - we're using anonymous login instead
-    navigate('/dashboard');
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error('يرجى إدخال بريد إلكتروني صالح');
+      return;
+    }
+    
+    const success = await login(email, password);
+    if (success) {
+      navigate('/dashboard');
+    }
+  };
+
+  const handleAnonymousLogin = async () => {
+    const success = await loginAnonymously();
+    if (success) {
+      navigate('/dashboard');
+    }
   };
 
   const toggleShowPassword = () => {
@@ -43,11 +60,87 @@ const Login: React.FC = () => {
           <div className="text-center mb-6">
             <LogIn className="h-12 w-12 text-primary mx-auto mb-2" />
             <h1 className="text-2xl font-bold">تسجيل الدخول</h1>
-            <p className="text-muted-foreground">تم تفعيل تسجيل الدخول كزائر تلقائياً</p>
+            <p className="text-muted-foreground">أدخل بياناتك للوصول إلى حسابك</p>
           </div>
 
-          <div className="text-center mt-6">
-            <p>جاري تحويلك إلى لوحة التحكم...</p>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm font-medium">
+                البريد الإلكتروني
+              </label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full"
+                placeholder="أدخل البريد الإلكتروني"
+                required
+                dir="ltr"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="password" className="block text-sm font-medium">
+                كلمة المرور
+              </label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full"
+                  placeholder="أدخل كلمة المرور"
+                  required
+                  dir="ltr"
+                />
+                <button
+                  type="button"
+                  onClick={toggleShowPassword}
+                  className="absolute inset-y-0 left-0 pl-3 flex items-center"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5 text-muted-foreground" />
+                  ) : (
+                    <Eye className="h-5 w-5 text-muted-foreground" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={loading}
+            >
+              {loading ? 'جاري التحميل...' : 'تسجيل الدخول'}
+            </Button>
+          </form>
+
+          <div className="mt-4 flex items-center justify-center">
+            <Separator className="w-1/3" />
+            <span className="px-2 text-xs text-muted-foreground">أو</span>
+            <Separator className="w-1/3" />
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full mt-4"
+            onClick={handleAnonymousLogin}
+            disabled={loading}
+          >
+            الدخول كزائر
+          </Button>
+
+          <div className="mt-6 text-center text-sm">
+            <p>
+              ليس لديك حساب؟{' '}
+              <Link to="/register" className="text-primary hover:underline">
+                إنشاء حساب جديد
+              </Link>
+            </p>
           </div>
         </div>
       </div>

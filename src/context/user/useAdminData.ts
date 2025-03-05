@@ -1,34 +1,28 @@
 
 import { toast } from 'sonner';
 import { User } from './types';
+import { supabase } from '../../services/supabase';
 
 export const useAdminData = () => {
   const getAllUsers = async (): Promise<User[]> => {
     try {
-      // محاكاة بيانات للمستخدمين
-      return [
-        {
-          id: '1',
-          username: 'مستخدم_1',
-          points: 1500,
-          cashNumber: '01012345678',
-          showPromotion: false
-        },
-        {
-          id: '2',
-          username: 'مستخدم_2',
-          points: 2000,
-          cashNumber: '01023456789',
-          showPromotion: true
-        },
-        {
-          id: '3',
-          username: 'مستخدم_3',
-          points: 3000,
-          cashNumber: '01034567890',
-          showPromotion: false
-        }
-      ];
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*');
+        
+      if (error) throw error;
+      
+      if (!data) return [];
+      
+      return data.map(user => ({
+        id: user.id,
+        username: user.username || 'مستخدم',
+        points: user.points || 0,
+        cashNumber: user.cash_number || '',
+        avatar: user.avatar,
+        lastPlayedQuiz: user.last_played_quiz || {},
+        showPromotion: user.show_promotion !== false
+      }));
     } catch (error) {
       console.error("Error getting all users:", error);
       toast.error('حدث خطأ أثناء جلب بيانات المستخدمين');
@@ -38,8 +32,13 @@ export const useAdminData = () => {
 
   const getUsersCount = async (): Promise<number> => {
     try {
-      // محاكاة عدد المستخدمين
-      return 3;
+      const { count, error } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+        
+      if (error) throw error;
+      
+      return count || 0;
     } catch (error) {
       console.error("Error getting users count:", error);
       return 0;
