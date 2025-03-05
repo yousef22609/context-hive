@@ -1,5 +1,4 @@
 
-import { supabase } from '../../services/supabase';
 import { toast } from 'sonner';
 import { User } from './types';
 
@@ -13,18 +12,11 @@ export const useUserData = (
     try {
       const newPoints = user.points + points;
       
-      const { error } = await supabase
-        .from('user_profiles')
-        .update({ points: newPoints })
-        .eq('id', user.id);
-        
-      if (error) throw error;
-      
       setUser({ ...user, points: newPoints });
       
       toast.success(`تم إضافة ${points} نقطة إلى رصيدك`);
       
-      // Show message to send screenshot if all answers are correct
+      // عرض رسالة إذا كانت جميع الإجابات صحيحة
       if (points === 15) {
         toast.success(
           'مبروك! لقد أجبت على جميع الأسئلة بشكل صحيح! التقط صورة للشاشة وأرسلها إلى 01007570190 للدخول في سحب على حساب بريميوم و 100 جنيه كاش',
@@ -53,16 +45,6 @@ export const useUserData = (
     try {
       const newPoints = user.points - points;
       
-      const { error } = await supabase
-        .from('user_profiles')
-        .update({
-          points: newPoints,
-          cash_number: cashNumber
-        })
-        .eq('id', user.id);
-        
-      if (error) throw error;
-      
       setUser({ ...user, points: newPoints, cashNumber });
       
       const cashAmount = (points / 1000) * 100;
@@ -90,13 +72,6 @@ export const useUserData = (
     if (!user) return;
     
     try {
-      const { error } = await supabase
-        .from('user_profiles')
-        .update({ cash_number: cashNumber })
-        .eq('id', user.id);
-        
-      if (error) throw error;
-      
       setUser({ ...user, cashNumber });
       toast.success('تم تحديث رقم الهاتف بنجاح');
     } catch (error) {
@@ -109,13 +84,6 @@ export const useUserData = (
     if (!user) return;
     
     try {
-      const { error } = await supabase
-        .from('user_profiles')
-        .update({ avatar })
-        .eq('id', user.id);
-        
-      if (error) throw error;
-      
       setUser({ ...user, avatar });
       toast.success('تم تحديث الصورة الشخصية بنجاح');
     } catch (error) {
@@ -128,13 +96,6 @@ export const useUserData = (
     if (!user) return;
     
     try {
-      const { error } = await supabase
-        .from('user_profiles')
-        .update({ show_promotion: false })
-        .eq('id', user.id);
-        
-      if (error) throw error;
-      
       setUser({ ...user, showPromotion: false });
     } catch (error) {
       console.error("Error hiding promotion:", error);
@@ -147,13 +108,6 @@ export const useUserData = (
     try {
       const timestamp = new Date().toISOString();
       const lastPlayedQuiz = { ...(user.lastPlayedQuiz || {}), [categoryId]: timestamp };
-      
-      const { error } = await supabase
-        .from('user_profiles')
-        .update({ last_played_quiz: lastPlayedQuiz })
-        .eq('id', user.id);
-        
-      if (error) throw error;
       
       setUser({
         ...user,

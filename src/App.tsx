@@ -34,9 +34,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   // Automatically login anonymously if not logged in
   React.useEffect(() => {
     if (!user && !loading) {
+      console.log("No user found, logging in anonymously...");
       loginAnonymously();
     }
-  }, [user, loading]);
+  }, [user, loading, loginAnonymously]);
   
   return <>{children}</>;
 };

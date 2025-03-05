@@ -1,112 +1,90 @@
 
 import { useState } from 'react';
-import { supabase } from '../../services/supabase';
 import { toast } from 'sonner';
 import { User } from './types';
+
+// استخدام معرف عشوائي للمستخدم
+const generateRandomId = () => {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+};
 
 export const useAuth = (
   setUser: React.Dispatch<React.SetStateAction<User | null>>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
+  // وظيفة لتسجيل الدخول - لن تستخدم حاليا بسبب إزالة صفحة تسجيل الدخول
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      // محاكاة نجاح تسجيل الدخول
+      const userId = generateRandomId();
+      const username = email.split('@')[0];
       
-      if (error) throw error;
-      return !!data.user;
+      const newUser: User = {
+        id: userId,
+        email: email,
+        username: username,
+        points: 0,
+        cashNumber: '',
+        lastPlayedQuiz: {},
+        showPromotion: true
+      };
+      
+      setUser(newUser);
+      toast.success(`مرحباً بك ${username}! 👋`);
+      return true;
     } catch (error: any) {
       console.error("Login error:", error);
-      toast.error(error.message === 'Invalid login credentials' 
-        ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة' 
-        : 'حدث خطأ أثناء تسجيل الدخول');
+      toast.error('حدث خطأ أثناء تسجيل الدخول');
       return false;
     }
   };
 
+  // وظيفة التسجيل - لن تستخدم حاليا بسبب إزالة صفحة التسجيل
   const register = async (email: string, password: string): Promise<boolean> => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password
-      });
+      // محاكاة نجاح التسجيل
+      const userId = generateRandomId();
+      const username = email.split('@')[0];
       
-      if (error) throw error;
+      const newUser: User = {
+        id: userId,
+        email: email,
+        username: username,
+        points: 0,
+        cashNumber: '',
+        lastPlayedQuiz: {},
+        showPromotion: true
+      };
       
-      if (data.user) {
-        // Create user profile
-        const { error: profileError } = await supabase
-          .from('user_profiles')
-          .insert({
-            id: data.user.id,
-            username: email.split('@')[0],
-            points: 0,
-            cash_number: '',
-            show_promotion: true,
-            last_played_quiz: {}
-          });
-          
-        if (profileError) throw profileError;
-        
-        toast.success('تم إنشاء الحساب بنجاح');
-        return true;
-      }
-      
-      return false;
+      setUser(newUser);
+      toast.success('تم إنشاء الحساب بنجاح');
+      return true;
     } catch (error: any) {
       console.error("Registration error:", error);
-      let errorMessage = 'حدث خطأ أثناء إنشاء الحساب';
-      
-      if (error.message.includes('already')) {
-        errorMessage = 'البريد الإلكتروني مستخدم بالفعل';
-      }
-      
-      toast.error(errorMessage);
+      toast.error('حدث خطأ أثناء إنشاء الحساب');
       return false;
     }
   };
 
+  // وظيفة تسجيل الدخول كزائر
   const loginAnonymously = async (): Promise<boolean> => {
     try {
-      const { data, error } = await supabase.auth.signInAnonymously();
+      const userId = generateRandomId();
+      // توليد اسم مستخدم عشوائي بالعربية
+      const randomUsername = `زائر_${Math.floor(Math.random() * 10000)}`;
       
-      if (error) throw error;
+      const newUser: User = {
+        id: userId,
+        username: randomUsername,
+        points: 0,
+        cashNumber: '',
+        lastPlayedQuiz: {},
+        showPromotion: true
+      };
       
-      if (data.user) {
-        // Generate a random username with arabic prefix
-        const randomUsername = `زائر_${Math.floor(Math.random() * 10000)}`;
-        
-        // Create anonymous user profile with better defaults
-        const { error: profileError } = await supabase
-          .from('user_profiles')
-          .insert({
-            id: data.user.id,
-            username: randomUsername,
-            points: 0,
-            cash_number: '',
-            show_promotion: true,
-            last_played_quiz: {}
-          });
-          
-        if (profileError) throw profileError;
-        
-        // Set the user in context
-        setUser({
-          id: data.user.id,
-          username: randomUsername,
-          points: 0,
-          cashNumber: '',
-          lastPlayedQuiz: {},
-          showPromotion: true
-        });
-        
-        toast.success(`مرحباً بك ${randomUsername}! 👋`);
-        return true;
-      }
-      
-      return false;
+      setUser(newUser);
+      toast.success(`مرحباً بك ${randomUsername}! 👋`);
+      return true;
     } catch (error: any) {
       console.error("Anonymous login error:", error);
       toast.error('حدث خطأ أثناء تسجيل الدخول كزائر');
@@ -114,9 +92,9 @@ export const useAuth = (
     }
   };
 
+  // وظيفة تسجيل الخروج
   const logout = async (): Promise<void> => {
     try {
-      await supabase.auth.signOut();
       setUser(null);
       toast.info('تم تسجيل الخروج');
     } catch (error) {
