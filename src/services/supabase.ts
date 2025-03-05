@@ -22,11 +22,14 @@ export const updateUserProfile = async (userId: string, updates: Partial<UserPro
   return true;
 };
 
+// هيكل مزيف لـ Supabase للتوافق مع الكود الحالي
 export const supabase = {
   auth: {
     getSession: async () => ({ data: { session: null } }),
     onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
-    signOut: async () => {}
+    signOut: async () => {},
+    signInWithPassword: async () => ({ data: { user: null }, error: null }),
+    signUp: async () => ({ data: { user: null }, error: null })
   },
   from: () => ({
     select: () => ({
@@ -37,8 +40,6 @@ export const supabase = {
     update: () => ({
       eq: async () => ({ error: null }),
     }),
-    insert: () => ({
-      eq: async () => ({ error: null }),
-    }),
+    insert: async () => ({ error: null }),
   }),
 };
