@@ -30,11 +30,8 @@ const Hero: React.FC = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/login" className="btn-primary px-8 py-3 text-lg">
-              تسجيل الدخول
-            </Link>
-            <Link to="/register" className="btn-outline px-8 py-3 text-lg">
-              إنشاء حساب جديد
+            <Link to="/dashboard" className="btn-primary px-8 py-3 text-lg">
+              ابدأ اللعب الآن
             </Link>
           </div>
         </div>
