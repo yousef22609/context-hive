@@ -29,9 +29,12 @@ export const supabase = useRealSupabase
         select: () => ({
           eq: () => ({
             single: async () => ({ data: null, error: null }),
-            data: []
+            data: [],
+            error: null
           }),
-          data: []
+          data: [],
+          error: null,
+          count: 0
         }),
         insert: () => ({
           data: null,

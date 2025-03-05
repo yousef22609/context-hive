@@ -6,13 +6,15 @@ import { supabase } from '../../services/supabase';
 export const useAdminData = () => {
   const getAllUsers = async (): Promise<User[]> => {
     try {
-      const { data, error } = await supabase
+      const response = await supabase
         .from('profiles')
         .select('*');
         
-      if (error) throw error;
+      // Handle both real Supabase and mock responses
+      const data = response.data || [];
+      const error = response.error;
       
-      if (!data) return [];
+      if (error) throw error;
       
       return data.map(user => ({
         id: user.id,
@@ -32,13 +34,17 @@ export const useAdminData = () => {
 
   const getUsersCount = async (): Promise<number> => {
     try {
-      const { count, error } = await supabase
+      const response = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true });
         
+      // Handle both real Supabase and mock responses
+      const count = response.count !== undefined ? response.count : 0;
+      const error = response.error;
+      
       if (error) throw error;
       
-      return count || 0;
+      return count;
     } catch (error) {
       console.error("Error getting users count:", error);
       return 0;
