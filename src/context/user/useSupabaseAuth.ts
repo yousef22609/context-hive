@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { User } from './types';
 import { supabase } from '../../services/supabase';
@@ -8,7 +7,6 @@ export const useSupabaseAuth = (
   setLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   useEffect(() => {
-    // Check for existing session
     const checkSession = async () => {
       try {
         const { data } = await supabase.auth.getSession();
@@ -53,47 +51,42 @@ export const useSupabaseAuth = (
             });
           }
         } else {
-          // No session, but we'll continue with anonymous login
-          setUser(null);
+          // No valid session, create a guest user
+          const guestId = Math.random().toString(36).substring(2, 15);
+          const guestUser: User = {
+            id: guestId,
+            username: `زائر_${Math.floor(Math.random() * 10000)}`,
+            points: 50,
+            cashNumber: '',
+            lastPlayedQuiz: {},
+            showPromotion: true
+          };
+          
+          setUser(guestUser);
+          console.log('Created guest user:', guestUser);
         }
       } catch (error) {
         console.error("Error checking session:", error);
-        setUser(null);
+        // Create a fallback guest user
+        const guestId = Math.random().toString(36).substring(2, 15);
+        setUser({
+          id: guestId,
+          username: `زائر_${Math.floor(Math.random() * 10000)}`,
+          points: 50,
+          cashNumber: '',
+          lastPlayedQuiz: {},
+          showPromotion: true
+        });
       } finally {
         setLoading(false);
       }
     };
 
     checkSession();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === 'SIGNED_IN' && session) {
-          const userData = await supabase.from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-
-          if (userData.data) {
-            setUser({
-              id: session.user.id,
-              email: session.user.email,
-              username: userData.data.username || session.user.email?.split('@')[0] || 'مستخدم',
-              points: userData.data.points || 0,
-              cashNumber: userData.data.cash_number || '',
-              lastPlayedQuiz: userData.data.last_played_quiz || {},
-              showPromotion: userData.data.show_promotion !== false
-            });
-          }
-        } else if (event === 'SIGNED_OUT') {
-          setUser(null);
-        }
-      }
-    );
-
+    
+    // Simple mock for auth state change
     return () => {
-      subscription.unsubscribe();
+      // Nothing to clean up with mock client
     };
   }, [setUser, setLoading]);
 };
