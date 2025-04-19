@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 import { Room, RoomMember, RoomMessage, Round, RoundQuestion, AIUse, User, Friend, PointsTransaction } from '../types/room';
 
@@ -367,8 +366,12 @@ export const subscribeToRoomMessages = (roomId: string, callback: (message: Room
           .single();
           
         const message: RoomMessage = {
-          ...payload.new,
-          username: userData?.username
+          id: payload.new.id,
+          room_id: payload.new.room_id,
+          user_id: payload.new.user_id,
+          username: userData?.username,
+          message: payload.new.message,
+          sent_at: payload.new.sent_at
         };
         callback(message);
       }
@@ -398,9 +401,12 @@ export const subscribeToRoomMembers = (roomId: string, callback: (member: RoomMe
           .single();
           
         const member: RoomMember = {
-          ...payload.new,
+          id: payload.new.id,
+          room_id: payload.new.room_id,
+          user_id: payload.new.user_id,
           username: userData?.username,
-          avatar_url: userData?.avatar_url
+          avatar_url: userData?.avatar_url,
+          joined_at: payload.new.joined_at
         };
         callback(member, 'INSERT');
       }
@@ -414,7 +420,17 @@ export const subscribeToRoomMembers = (roomId: string, callback: (member: RoomMe
         filter: `room_id=eq.${roomId}`
       },
       (payload) => {
-        callback(payload.old as RoomMember, 'DELETE');
+        // For DELETE events we need to ensure payload.old has all required properties
+        const oldMember = payload.old as Partial<RoomMember>;
+        const member: RoomMember = {
+          id: oldMember.id || '',
+          room_id: oldMember.room_id || '',
+          user_id: oldMember.user_id || '',
+          username: oldMember.username,
+          avatar_url: oldMember.avatar_url,
+          joined_at: oldMember.joined_at || new Date().toISOString()
+        };
+        callback(member, 'DELETE');
       }
     )
     .subscribe();

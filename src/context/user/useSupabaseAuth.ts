@@ -26,8 +26,9 @@ export const useSupabaseAuth = (
             setUser({
               id: userData.id,
               username: userData.username,
-              avatar_url: userData.avatar_url,
+              avatar: userData.avatar_url || '', // Map avatar_url to avatar
               points: userData.total_points || 0,
+              cashNumber: '', // Set default value for required properties
               created_at: userData.created_at
             });
           }
@@ -60,8 +61,9 @@ export const useSupabaseAuth = (
           setUser({
             id: userData.id,
             username: userData.username,
-            avatar_url: userData.avatar_url,
+            avatar: userData.avatar_url || '', // Map avatar_url to avatar
             points: userData.total_points || 0,
+            cashNumber: '', // Set default value for required properties
             created_at: userData.created_at
           });
         }
