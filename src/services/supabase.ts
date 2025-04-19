@@ -1,19 +1,76 @@
-
 import { createClient } from '@supabase/supabase-js';
 import { Room, RoomMember, RoomMessage, Round, RoundQuestion, AIUse, User, Friend, PointsTransaction } from '../types/room';
+import { toast } from 'sonner';
 
 // Get Supabase credentials with fallback values for development
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 // Check if URL and key are available
-if (!supabaseUrl || !supabaseAnonKey) {
+const isSupabaseConfigured = supabaseUrl && supabaseAnonKey;
+if (!isSupabaseConfigured) {
   console.error('Missing Supabase credentials. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment variables.');
 }
 
-// Create client with empty string fallbacks to prevent the app from crashing
-// This will create a non-functional client but won't crash the app during initial load
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Create client with proper error handling
+export const supabase = isSupabaseConfigured 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : createMockSupabaseClient();
+
+// Create a mock Supabase client for development without credentials
+function createMockSupabaseClient() {
+  return {
+    from: () => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: null, error: new Error('Supabase not configured') }),
+          order: () => ({
+            limit: async () => ({ data: null, error: new Error('Supabase not configured') })
+          }),
+          is: () => ({
+            order: () => ({
+              limit: async () => ({ data: null, error: new Error('Supabase not configured') })
+            })
+          }),
+          order: async () => ({ data: [], error: null }),
+        }),
+        order: async () => ({ data: [], error: null }),
+        eq: () => ({
+          eq: () => ({
+            single: async () => ({ data: null, error: new Error('Supabase not configured') })
+          })
+        })
+      }),
+      insert: () => ({
+        select: () => ({
+          single: async () => ({ data: null, error: new Error('Supabase not configured') })
+        })
+      }),
+      update: () => ({
+        eq: () => ({
+          select: () => ({
+            single: async () => ({ data: null, error: new Error('Supabase not configured') })
+          })
+        })
+      }),
+      count: async () => ({ count: 0, error: new Error('Supabase not configured') }),
+    }),
+    channel: () => ({
+      on: () => ({
+        on: () => ({
+          subscribe: () => {}
+        }),
+        subscribe: () => {}
+      })
+    }),
+    auth: {
+      onAuthStateChange: () => ({ data: null, error: null }),
+      signUp: async () => ({ data: null, error: new Error('Supabase not configured') }),
+      signInWithPassword: async () => ({ data: null, error: new Error('Supabase not configured') }),
+      signOut: async () => ({ error: null }),
+    }
+  };
+}
 
 export interface UserProfile {
   id: string;
@@ -27,6 +84,11 @@ export interface UserProfile {
 
 // Room related functions
 export const createRoom = async (ownerId: string): Promise<{room: Room, code: string} | null> => {
+  if (!isSupabaseConfigured) {
+    toast.error('Supabase not configured. Using Firebase fallback.');
+    return null;
+  }
+  
   try {
     // Generate a random 6-character room code
     const code = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -62,6 +124,11 @@ export const createRoom = async (ownerId: string): Promise<{room: Room, code: st
 };
 
 export const joinRoom = async (roomCode: string, userId: string): Promise<Room | null> => {
+  if (!isSupabaseConfigured) {
+    toast.error('Supabase not configured. Using Firebase fallback.');
+    return null;
+  }
+  
   try {
     // First find the room by code
     const { data: room, error: roomError } = await supabase
@@ -102,6 +169,10 @@ export const joinRoom = async (roomCode: string, userId: string): Promise<Room |
 };
 
 export const getRoomMembers = async (roomId: string): Promise<RoomMember[]> => {
+  if (!isSupabaseConfigured) {
+    return [];
+  }
+  
   try {
     const { data, error } = await supabase
       .from('room_members')
@@ -129,6 +200,10 @@ export const getRoomMembers = async (roomId: string): Promise<RoomMember[]> => {
 };
 
 export const getRoomMessages = async (roomId: string): Promise<RoomMessage[]> => {
+  if (!isSupabaseConfigured) {
+    return [];
+  }
+  
   try {
     const { data, error } = await supabase
       .from('room_messages')
@@ -156,6 +231,11 @@ export const getRoomMessages = async (roomId: string): Promise<RoomMessage[]> =>
 };
 
 export const sendRoomMessage = async (roomId: string, userId: string, message: string): Promise<RoomMessage | null> => {
+  if (!isSupabaseConfigured) {
+    toast.error('Supabase not configured. Using Firebase fallback.');
+    return null;
+  }
+  
   try {
     const { data, error } = await supabase
       .from('room_messages')
@@ -185,6 +265,11 @@ export const sendRoomMessage = async (roomId: string, userId: string, message: s
 
 // Game related functions
 export const startNewRound = async (roomId: string, setterId: string, word: string): Promise<Round | null> => {
+  if (!isSupabaseConfigured) {
+    toast.error('Supabase not configured. Using Firebase fallback.');
+    return null;
+  }
+  
   try {
     const { data, error } = await supabase
       .from('rounds')
@@ -206,6 +291,10 @@ export const startNewRound = async (roomId: string, setterId: string, word: stri
 };
 
 export const getCurrentRound = async (roomId: string): Promise<Round | null> => {
+  if (!isSupabaseConfigured) {
+    return null;
+  }
+  
   try {
     const { data, error } = await supabase
       .from('rounds')
@@ -225,6 +314,11 @@ export const getCurrentRound = async (roomId: string): Promise<Round | null> => 
 };
 
 export const askQuestion = async (roundId: string, userId: string, question: string, answer: 'yes' | 'no'): Promise<RoundQuestion | null> => {
+  if (!isSupabaseConfigured) {
+    toast.error('Supabase not configured. Using Firebase fallback.');
+    return null;
+  }
+  
   try {
     const { data, error } = await supabase
       .from('round_questions')
@@ -246,6 +340,10 @@ export const askQuestion = async (roundId: string, userId: string, question: str
 };
 
 export const getRoundQuestions = async (roundId: string): Promise<RoundQuestion[]> => {
+  if (!isSupabaseConfigured) {
+    return [];
+  }
+  
   try {
     const { data, error } = await supabase
       .from('round_questions')
@@ -262,6 +360,11 @@ export const getRoundQuestions = async (roundId: string): Promise<RoundQuestion[
 };
 
 export const endRound = async (roundId: string, winnerId?: string): Promise<Round | null> => {
+  if (!isSupabaseConfigured) {
+    toast.error('Supabase not configured. Using Firebase fallback.');
+    return null;
+  }
+  
   try {
     const { data, error } = await supabase
       .from('rounds')
@@ -288,6 +391,11 @@ export const endRound = async (roundId: string, winnerId?: string): Promise<Roun
 };
 
 export const useAIHelp = async (userId: string, roundId: string): Promise<boolean> => {
+  if (!isSupabaseConfigured) {
+    toast.error('Supabase not configured. Using Firebase fallback.');
+    return false;
+  }
+  
   try {
     // Check if user has already used 3 AI helps in this round
     const { count, error: countError } = await supabase
@@ -328,6 +436,11 @@ export const addPoints = async (
   type: 'win' | 'boost_purchase' | 'ai_use' | 'redeem' | 'gift' = 'win',
   description?: string
 ): Promise<boolean> => {
+  if (!isSupabaseConfigured) {
+    toast.error('Supabase not configured. Using Firebase fallback.');
+    return false;
+  }
+  
   try {
     // Add points transaction
     const { error: transactionError } = await supabase
@@ -358,6 +471,10 @@ export const addPoints = async (
 
 // Realtime subscriptions
 export const subscribeToRoomMessages = (roomId: string, callback: (message: RoomMessage) => void) => {
+  if (!isSupabaseConfigured) {
+    return () => {}; // Return empty unsubscribe function
+  }
+  
   const channel = supabase.channel(`room-${roomId}`)
     .on(
       'postgres_changes',
@@ -393,6 +510,10 @@ export const subscribeToRoomMessages = (roomId: string, callback: (message: Room
 };
 
 export const subscribeToRoomMembers = (roomId: string, callback: (member: RoomMember, eventType: 'INSERT' | 'DELETE') => void) => {
+  if (!isSupabaseConfigured) {
+    return () => {}; // Return empty unsubscribe function
+  }
+  
   const channel = supabase.channel(`members-${roomId}`)
     .on(
       'postgres_changes',

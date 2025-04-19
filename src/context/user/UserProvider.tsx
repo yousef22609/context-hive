@@ -35,8 +35,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const handleAnonymousLogin = async () => {
       if (!loading && !user) {
-        await loginAnonymously();
-        setLoading(false);
+        try {
+          await loginAnonymously();
+        } catch (error) {
+          console.error("Failed to log in anonymously:", error);
+          // Even if anonymous login fails, we don't want to keep loading forever
+        } finally {
+          setLoading(false);
+        }
       } else {
         // If we already have a user or are still loading, just update loading state
         setLoading(false);
