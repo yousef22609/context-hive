@@ -29,7 +29,7 @@ export const useSupabaseAuth = (
               avatar: userData.avatar_url || '', // Map avatar_url to avatar
               points: userData.total_points || 0,
               cashNumber: '', // Set default value for required properties
-              created_at: userData.created_at
+              // removed created_at as it's not in the User type
             });
           }
         }
@@ -64,7 +64,7 @@ export const useSupabaseAuth = (
             avatar: userData.avatar_url || '', // Map avatar_url to avatar
             points: userData.total_points || 0,
             cashNumber: '', // Set default value for required properties
-            created_at: userData.created_at
+            // removed created_at as it's not in the User type
           });
         }
       } else if (event === 'SIGNED_OUT') {
