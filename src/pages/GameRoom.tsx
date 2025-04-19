@@ -112,7 +112,15 @@ const GameRoom: React.FC = () => {
     // Subscribe to room members
     const unsubscribeMembers = subscribeToRoomMembers(roomId, (member, eventType) => {
       if (eventType === 'INSERT') {
-        setPlayers(prev => [...prev, member]);
+        // Check if player already exists before adding
+        setPlayers(prev => {
+          // Check if this player already exists in the list
+          const playerExists = prev.some(p => p.user_id === member.user_id);
+          if (playerExists) {
+            return prev; // Don't add if already exists
+          }
+          return [...prev, member]; // Add only if it's a new player
+        });
         toast.info(`${member.username || 'لاعب جديد'} انضم إلى الغرفة`);
       } else if (eventType === 'DELETE') {
         setPlayers(prev => prev.filter(p => p.id !== member.id));
