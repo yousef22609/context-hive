@@ -1,9 +1,18 @@
+
 import { createClient } from '@supabase/supabase-js';
 import { Room, RoomMember, RoomMessage, Round, RoundQuestion, AIUse, User, Friend, PointsTransaction } from '../types/room';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Get Supabase credentials with fallback values for development
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
+// Check if URL and key are available
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Missing Supabase credentials. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment variables.');
+}
+
+// Create client with empty string fallbacks to prevent the app from crashing
+// This will create a non-functional client but won't crash the app during initial load
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export interface UserProfile {

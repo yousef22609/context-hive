@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import UserContext from './userContext';
 import { User, UserContextType } from './types';
@@ -7,14 +6,14 @@ import { canPlayQuizCategory, getTimeRemaining, isAdmin } from './utils';
 import { useAuth } from './useAuth';
 import { useUserData } from './useUserData';
 import { useAdminData } from './useAdminData';
-import { useSupabaseAuth } from './useSupabaseAuth';
+// Remove the import for useSupabaseAuth since we won't use it until Supabase is properly configured
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Use the authentication hook to manage Supabase session
-  useSupabaseAuth(setUser, setLoading);
+  // Remove the useSupabaseAuth call that was causing the error
+  // We'll rely on anonymous login instead for now
 
   // Get authentication methods
   const { login, register, logout, loginAnonymously } = useAuth(setUser, setLoading);
@@ -37,11 +36,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const handleAnonymousLogin = async () => {
       if (!loading && !user) {
         await loginAnonymously();
+        setLoading(false);
+      } else {
+        // If we already have a user or are still loading, just update loading state
+        setLoading(false);
       }
     };
     
     handleAnonymousLogin();
-  }, [loading]);
+  }, [loading, user, loginAnonymously]);
 
   // Context value with all user functions
   const contextValue: UserContextType = {
