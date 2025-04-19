@@ -3,10 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
-import { Eye, EyeOff, UserPlus } from 'lucide-react';
+import { Eye, EyeOff, UserPlus, AlertCircle, Flame } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const Register: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -14,7 +15,7 @@ const Register: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState('');
-  const { user, register, loading } = useUser();
+  const { user, register: registerUser, loading } = useUser();
   const navigate = useNavigate();
 
   // If user is already logged in, redirect to dashboard
@@ -44,7 +45,7 @@ const Register: React.FC = () => {
       return;
     }
     
-    const success = await register(email, password);
+    const success = await registerUser(email, password);
     if (success) {
       toast.success(`مرحباً بك! تم إنشاء حسابك بنجاح. جاري تحويلك إلى لوحة التحكم...`);
       navigate('/dashboard');
@@ -61,16 +62,18 @@ const Register: React.FC = () => {
   return (
     <Layout>
       <div className="flex justify-center items-center min-h-[calc(100vh-200px)]">
-        <div className="glass-card w-full max-w-md p-8 animate-fade-in">
+        <div className="backdrop-blur-sm bg-black/40 border border-purple-900/50 w-full max-w-md p-8 rounded-xl shadow-xl animate-fade-in">
           <div className="text-center mb-6">
-            <UserPlus className="h-12 w-12 text-primary mx-auto mb-2" />
-            <h1 className="text-2xl font-bold">إنشاء حساب جديد</h1>
-            <p className="text-muted-foreground">سجل بياناتك للبدء في استخدام التطبيق</p>
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full p-3 w-16 h-16 flex items-center justify-center mx-auto mb-4">
+              <Flame className="h-10 w-10 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-white">انضم إلى نار التحدي</h1>
+            <p className="text-gray-400">سجل بياناتك للبدء في المنافسة</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-medium">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-200">
                 البريد الإلكتروني
               </label>
               <Input
@@ -78,7 +81,7 @@ const Register: React.FC = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full"
+                className="w-full bg-black/50 border-gray-700 text-white placeholder-gray-500"
                 placeholder="أدخل البريد الإلكتروني"
                 required
                 dir="ltr"
@@ -86,7 +89,7 @@ const Register: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-medium">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-200">
                 كلمة المرور
               </label>
               <div className="relative">
@@ -98,7 +101,7 @@ const Register: React.FC = () => {
                     setPassword(e.target.value);
                     setPasswordError('');
                   }}
-                  className="w-full"
+                  className="w-full bg-black/50 border-gray-700 text-white placeholder-gray-500"
                   placeholder="أدخل كلمة المرور"
                   required
                   dir="ltr"
@@ -109,16 +112,16 @@ const Register: React.FC = () => {
                   className="absolute inset-y-0 left-0 pl-3 flex items-center"
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-muted-foreground" />
+                    <EyeOff className="h-5 w-5 text-gray-500" />
                   ) : (
-                    <Eye className="h-5 w-5 text-muted-foreground" />
+                    <Eye className="h-5 w-5 text-gray-500" />
                   )}
                 </button>
               </div>
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="confirm-password" className="block text-sm font-medium">
+              <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-200">
                 تأكيد كلمة المرور
               </label>
               <div className="relative">
@@ -130,7 +133,7 @@ const Register: React.FC = () => {
                     setConfirmPassword(e.target.value);
                     setPasswordError('');
                   }}
-                  className={`w-full ${
+                  className={`w-full bg-black/50 border-gray-700 text-white placeholder-gray-500 ${
                     passwordError ? 'border-red-500' : ''
                   }`}
                   placeholder="أعد إدخال كلمة المرور"
@@ -143,9 +146,9 @@ const Register: React.FC = () => {
                   className="absolute inset-y-0 left-0 pl-3 flex items-center"
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-muted-foreground" />
+                    <EyeOff className="h-5 w-5 text-gray-500" />
                   ) : (
-                    <Eye className="h-5 w-5 text-muted-foreground" />
+                    <Eye className="h-5 w-5 text-gray-500" />
                   )}
                 </button>
               </div>
@@ -156,7 +159,7 @@ const Register: React.FC = () => {
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white"
               disabled={loading}
             >
               {loading ? 'جاري التحميل...' : 'إنشاء حساب'}
@@ -164,9 +167,9 @@ const Register: React.FC = () => {
           </form>
 
           <div className="mt-6 text-center text-sm">
-            <p>
+            <p className="text-gray-400">
               لديك حساب بالفعل؟{' '}
-              <Link to="/login" className="text-primary hover:underline">
+              <Link to="/login" className="text-purple-500 hover:underline">
                 تسجيل الدخول
               </Link>
             </p>

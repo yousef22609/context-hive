@@ -2,10 +2,11 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { LogOut, Star, User, LayoutDashboard } from 'lucide-react';
+import { LogOut, Star, User, LayoutDashboard, Flame } from 'lucide-react';
 import AnimatedBackground from './AnimatedBackground';
 import DeveloperInfoDialog from './DeveloperInfoDialog';
 import PromotionMessage from './PromotionMessage';
+import FireEffects from './FireEffects';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -18,17 +19,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const handleLogout = () => {
     logout();
-    navigate('/dashboard'); // Navigate to dashboard instead of login
+    navigate('/dashboard');
   };
 
   return (
-    <div className="flex flex-col min-h-screen" dir="rtl">
-      <AnimatedBackground />
-      <header className="py-4 px-6 z-10 relative">
+    <div className="flex flex-col min-h-screen bg-[#1A1F2C]" dir="rtl">
+      <FireEffects />
+      <header className="py-4 px-6 z-10 relative backdrop-blur-sm bg-black/20">
         <div className="mx-auto max-w-7xl flex justify-between items-center">
           <Link to="/dashboard" className="flex items-center">
-            <Star className="h-6 w-6 text-primary animate-star-glow mr-2" />
-            <h1 className="text-xl font-bold">يوما كويز</h1>
+            <Flame className="h-6 w-6 text-orange-500 animate-pulse mr-2" />
+            <h1 className="text-xl font-bold text-white">
+              <span className="text-orange-500">Zexs</span> - نار التحدي
+            </h1>
           </Link>
           
           <nav>
@@ -36,35 +39,35 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               {user && (
                 <>
                   <li>
-                    <Link to="/dashboard" className={`link-hover ${location.pathname === '/dashboard' ? 'text-primary font-medium' : ''}`}>
+                    <Link to="/dashboard" className={`link-hover ${location.pathname === '/dashboard' ? 'text-orange-500 font-medium' : 'text-white'}`}>
                       <span className="flex items-center">
                         <LayoutDashboard className="h-4 w-4 mr-1" />
-                        لوحة التحكم
+                        الرئيسية
                       </span>
                     </Link>
                   </li>
                   <li>
-                    <Link to="/play" className={`link-hover ${location.pathname === '/play' ? 'text-primary font-medium' : ''}`}>العب</Link>
+                    <Link to="/rooms" className={`link-hover ${location.pathname === '/rooms' ? 'text-orange-500 font-medium' : 'text-white'}`}>الغرف</Link>
                   </li>
                   <li>
-                    <Link to="/leaderboard" className={`link-hover ${location.pathname === '/leaderboard' ? 'text-primary font-medium' : ''}`}>المتصدرين</Link>
+                    <Link to="/leaderboard" className={`link-hover ${location.pathname === '/leaderboard' ? 'text-orange-500 font-medium' : 'text-white'}`}>المتصدرين</Link>
                   </li>
                   <li>
-                    <Link to="/exchange" className={`link-hover ${location.pathname === '/exchange' ? 'text-primary font-medium' : ''}`}>استبدال</Link>
+                    <Link to="/exchange" className={`link-hover ${location.pathname === '/exchange' ? 'text-orange-500 font-medium' : 'text-white'}`}>استبدال النقاط</Link>
                   </li>
                   <li className="mr-4">
-                    <Link to="/profile" className="flex items-center justify-center w-8 h-8 rounded-full overflow-hidden border border-primary hover:shadow-md transition-all">
+                    <Link to="/profile" className="flex items-center justify-center w-8 h-8 rounded-full overflow-hidden border border-orange-500 hover:shadow-md hover:shadow-orange-500/50 transition-all">
                       {user.avatar ? (
                         <img src={user.avatar} alt={user.username} className="w-full h-full object-cover" />
                       ) : (
-                        <User className="h-5 w-5 text-primary" />
+                        <User className="h-5 w-5 text-orange-500" />
                       )}
                     </Link>
                   </li>
                   <li>
                     <button 
                       onClick={handleLogout}
-                      className="text-sm text-muted-foreground hover:text-destructive flex items-center"
+                      className="text-sm text-gray-300 hover:text-orange-500 flex items-center"
                     >
                       <LogOut className="h-4 w-4 mr-1" />
                       خروج
@@ -78,12 +81,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </header>
       
       <main className="flex-1 p-6 z-0 relative">
-        {user && <PromotionMessage />}
         {children}
       </main>
       
-      <footer className="p-6 text-center text-sm text-muted-foreground z-10 relative">
-        <p>جميع الحقوق محفوظة لمنصة يوما كويز © {new Date().getFullYear()}</p>
+      <footer className="p-6 text-center text-sm text-gray-400 z-10 relative">
+        <p>جميع الحقوق محفوظة لمنصة Zexs © {new Date().getFullYear()}</p>
         <div className="mt-2">
           <DeveloperInfoDialog />
         </div>

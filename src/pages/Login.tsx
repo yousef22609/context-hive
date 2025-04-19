@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import Layout from '../components/Layout';
-import { Eye, EyeOff, LogIn, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, LogIn, AlertCircle, Flame } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -62,15 +62,17 @@ const Login: React.FC = () => {
   return (
     <Layout>
       <div className="flex justify-center items-center min-h-[calc(100vh-200px)]">
-        <div className="glass-card w-full max-w-md p-8 animate-fade-in">
+        <div className="backdrop-blur-sm bg-black/40 border border-purple-900/50 w-full max-w-md p-8 rounded-xl shadow-xl animate-fade-in">
           <div className="text-center mb-6">
-            <LogIn className="h-12 w-12 text-primary mx-auto mb-2" />
-            <h1 className="text-2xl font-bold">تسجيل الدخول</h1>
-            <p className="text-muted-foreground">أدخل بياناتك للوصول إلى حسابك</p>
+            <div className="bg-gradient-to-r from-orange-600 to-red-600 rounded-full p-3 w-16 h-16 flex items-center justify-center mx-auto mb-4">
+              <Flame className="h-10 w-10 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-white">مرحبًا بك في Zexs</h1>
+            <p className="text-gray-400">سجل دخولك للبدء في نار التحدي</p>
           </div>
 
           {loginError && (
-            <Alert variant="destructive" className="mb-4">
+            <Alert variant="destructive" className="mb-4 bg-red-950/50 border-red-900">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
                 {loginError}
@@ -80,7 +82,7 @@ const Login: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-medium">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-200">
                 البريد الإلكتروني
               </label>
               <Input
@@ -91,7 +93,7 @@ const Login: React.FC = () => {
                   setEmail(e.target.value);
                   setLoginError('');
                 }}
-                className="w-full"
+                className="w-full bg-black/50 border-gray-700 text-white placeholder-gray-500"
                 placeholder="أدخل البريد الإلكتروني"
                 required
                 dir="ltr"
@@ -99,7 +101,7 @@ const Login: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-medium">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-200">
                 كلمة المرور
               </label>
               <div className="relative">
@@ -111,7 +113,7 @@ const Login: React.FC = () => {
                     setPassword(e.target.value);
                     setLoginError('');
                   }}
-                  className="w-full"
+                  className="w-full bg-black/50 border-gray-700 text-white placeholder-gray-500"
                   placeholder="أدخل كلمة المرور"
                   required
                   dir="ltr"
@@ -122,9 +124,9 @@ const Login: React.FC = () => {
                   className="absolute inset-y-0 left-0 pl-3 flex items-center"
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-muted-foreground" />
+                    <EyeOff className="h-5 w-5 text-gray-500" />
                   ) : (
-                    <Eye className="h-5 w-5 text-muted-foreground" />
+                    <Eye className="h-5 w-5 text-gray-500" />
                   )}
                 </button>
               </div>
@@ -132,7 +134,7 @@ const Login: React.FC = () => {
 
             <Button 
               type="submit" 
-              className="w-full" 
+              className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white" 
               disabled={loading}
             >
               {loading ? 'جاري التحميل...' : 'تسجيل الدخول'}
@@ -140,15 +142,15 @@ const Login: React.FC = () => {
           </form>
 
           <div className="mt-4 flex items-center justify-center">
-            <Separator className="w-1/3" />
-            <span className="px-2 text-xs text-muted-foreground">أو</span>
-            <Separator className="w-1/3" />
+            <Separator className="w-1/3 bg-gray-700" />
+            <span className="px-2 text-xs text-gray-400">أو</span>
+            <Separator className="w-1/3 bg-gray-700" />
           </div>
 
           <Button
             type="button"
             variant="outline"
-            className="w-full mt-4"
+            className="w-full mt-4 border-gray-700 text-gray-300 hover:bg-gray-800"
             onClick={handleAnonymousLogin}
             disabled={loading}
           >
@@ -156,9 +158,9 @@ const Login: React.FC = () => {
           </Button>
 
           <div className="mt-6 text-center text-sm">
-            <p>
+            <p className="text-gray-400">
               ليس لديك حساب؟{' '}
-              <Link to="/register" className="text-primary hover:underline">
+              <Link to="/register" className="text-orange-500 hover:underline">
                 إنشاء حساب جديد
               </Link>
             </p>
