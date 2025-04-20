@@ -11,8 +11,8 @@ export interface RoomMember {
   id: string;
   room_id: string;
   user_id: string;
-  username?: string; // Join with users table
-  avatar_url?: string; // Join with users table
+  username?: string; // Join with profiles table
+  avatar_url?: string; // Join with profiles table
   joined_at: string;
 }
 
@@ -20,7 +20,7 @@ export interface RoomMessage {
   id: string;
   room_id: string;
   user_id: string;
-  username?: string; // Join with users table
+  username?: string; // Join with profiles table
   message: string;
   sent_at: string;
 }

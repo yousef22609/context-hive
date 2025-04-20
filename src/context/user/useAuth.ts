@@ -1,6 +1,7 @@
+
 import { toast } from 'sonner';
 import { User } from './types';
-import { supabase } from '../../services/supabase';
+import { supabase, isSupabaseAvailable } from '../../lib/supabase';
 
 // Generate random ID for guest users
 const generateRandomId = () => {
@@ -16,6 +17,11 @@ export const useAuth = (
     try {
       setLoading(true);
       
+      if (!isSupabaseAvailable()) {
+        console.warn('Supabase not available for login');
+        return false;
+      }
+      
       // Try to authenticate with Supabase
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -29,23 +35,24 @@ export const useAuth = (
       }
       
       if (data?.user) {
-        const userData = await supabase.from('profiles')
+        const { data: userData, error: profileError } = await supabase
+          .from('profiles')
           .select('*')
           .eq('id', data.user.id)
           .single();
           
-        if (userData.data) {
+        if (userData) {
           setUser({
             id: data.user.id,
-            email: data.user.email,
-            username: userData.data.username || data.user.email?.split('@')[0] || 'مستخدم',
-            points: userData.data.points || 0,
-            cashNumber: userData.data.cash_number || '',
-            lastPlayedQuiz: userData.data.last_played_quiz || {},
-            showPromotion: userData.data.show_promotion !== false
+            email: data.user.email || '',
+            username: userData.username || data.user.email?.split('@')[0] || 'مستخدم',
+            points: userData.total_points || 0,
+            cashNumber: userData.cash_number || '',
+            lastPlayedQuiz: userData.last_played_quiz || {},
+            showPromotion: userData.show_promotion !== false
           });
           
-          toast.success(`مرحباً بك ${userData.data.username || data.user.email?.split('@')[0] || 'مستخدم'}! 👋`);
+          toast.success(`مرحباً بك ${userData.username || data.user.email?.split('@')[0] || 'مستخدم'}! 👋`);
           return true;
         }
       }
@@ -55,62 +62,6 @@ export const useAuth = (
     } catch (error: any) {
       console.error("Login error:", error);
       toast.error('حدث خطأ في تسجيل الدخول');
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Other methods (register, loginAnonymously, logout)
-  const register = async (email: string, password: string): Promise<boolean> => {
-    try {
-      setLoading(true);
-      
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: window.location.origin + '/dashboard'
-        }
-      });
-      
-      if (error) {
-        toast.error(error.message || 'فشل إنشاء الحساب');
-        return false;
-      }
-      
-      if (data.user) {
-        const username = email.split('@')[0];
-        
-        // Create profile
-        await supabase.from('profiles').insert({
-          id: data.user.id,
-          username: username,
-          points: 0,
-          cash_number: '',
-          last_played_quiz: {},
-          show_promotion: true
-        });
-        
-        setUser({
-          id: data.user.id,
-          email: data.user.email,
-          username: username,
-          points: 0,
-          cashNumber: '',
-          lastPlayedQuiz: {},
-          showPromotion: true
-        });
-        
-        toast.success('تم إنشاء الحساب بنجاح');
-        return true;
-      }
-      
-      toast.error('حدث خطأ في إنشاء الحساب');
-      return false;
-    } catch (error: any) {
-      console.error("Registration error:", error);
-      toast.error('حدث خطأ أثناء إنشاء الحساب');
       return false;
     } finally {
       setLoading(false);
@@ -143,10 +94,77 @@ export const useAuth = (
     }
   };
 
+  const register = async (email: string, password: string): Promise<boolean> => {
+    try {
+      setLoading(true);
+      
+      if (!isSupabaseAvailable()) {
+        console.warn('Supabase not available for register');
+        return false;
+      }
+      
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: window.location.origin + '/dashboard'
+        }
+      });
+      
+      if (error) {
+        toast.error(error.message || 'فشل إنشاء الحساب');
+        return false;
+      }
+      
+      if (data.user) {
+        const username = email.split('@')[0];
+        
+        // Create profile
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: data.user.id,
+            username: username,
+            total_points: 0
+          });
+
+        if (profileError) {
+          console.error("Error creating profile:", profileError);
+          toast.error('فشل إنشاء الملف الشخصي');
+          return false;
+        }
+        
+        setUser({
+          id: data.user.id,
+          email: data.user.email || '',
+          username: username,
+          points: 0,
+          cashNumber: '',
+          lastPlayedQuiz: {},
+          showPromotion: true
+        });
+        
+        toast.success('تم إنشاء الحساب بنجاح');
+        return true;
+      }
+      
+      toast.error('حدث خطأ في إنشاء الحساب');
+      return false;
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      toast.error('حدث خطأ أثناء إنشاء الحساب');
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Logout function
   const logout = async (): Promise<void> => {
     try {
-      await supabase.auth.signOut();
+      if (isSupabaseAvailable()) {
+        await supabase.auth.signOut();
+      }
       setUser(null);
       toast.info('تم تسجيل الخروج');
     } catch (error) {

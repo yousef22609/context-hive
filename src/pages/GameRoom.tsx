@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
@@ -14,7 +13,7 @@ import {
   getCurrentRound, startNewRound, endRound,
   askQuestion, getRoundQuestions, useAIHelp
 } from '../services/supabase';
-import { RoomMember, RoomMessage, Round } from '../types/room';
+import { RoomMember, RoomMessage, Round, RoundQuestion } from '../types/room';
 
 const GameRoom: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();

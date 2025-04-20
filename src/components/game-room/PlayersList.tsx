@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, Crown } from 'lucide-react';
 import { RoomMember } from '@/types/room';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 interface PlayersListProps {
   players: RoomMember[];
@@ -26,9 +27,15 @@ const PlayersList: React.FC<PlayersListProps> = ({ players, currentSetterId }) =
               className="flex items-center justify-between px-4 py-3 border-b border-gray-800 last:border-0"
             >
               <div className="flex items-center">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center text-white font-bold">
-                  {player.username?.charAt(0) || '?'}
-                </div>
+                <Avatar className="h-8 w-8">
+                  {player.avatar_url ? (
+                    <AvatarImage src={player.avatar_url} alt={player.username || 'User'} />
+                  ) : (
+                    <AvatarFallback className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
+                      {player.username?.charAt(0) || '?'}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
                 <span className="mr-2 text-gray-300">
                   {player.username || 'لاعب'}
                   {player.user_id === currentSetterId && (
