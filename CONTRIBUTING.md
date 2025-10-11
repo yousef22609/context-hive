@@ -77,7 +77,7 @@ For substantial changes:
 
 1. **Fork the repository**
    ```bash
-   git clone https://github.com/yourusername/context-hive.git
+   git clone https://github.com/Petsuro85/context-hive.git
    cd context-hive
    ```
 

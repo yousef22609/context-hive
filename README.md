@@ -229,8 +229,8 @@ MIT License - See [LICENSE](LICENSE) file for details.
 
 ## Community
 
-- Issues: [GitHub Issues](https://github.com/yourusername/context-hive/issues)
-- Discussions: [GitHub Discussions](https://github.com/yourusername/context-hive/discussions)
+- Issues: [GitHub Issues](https://github.com/Petsuro85/context-hive/issues)
+- Discussions: [GitHub Discussions](https://github.com/Petsuro85/context-hive/discussions)
 
 ---
 
