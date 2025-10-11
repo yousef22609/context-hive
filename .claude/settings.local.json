@@ -19,7 +19,11 @@
       "Bash(bash scripts/validate_all.sh:*)",
       "Bash(dos2unix:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(bash:*)",
+      "Bash(for script in scripts/*.sh)",
+      "Bash(do sed -i 's/\\r$//' \"$script\")",
+      "Bash(echo \"\n========================================\n✅ FULL VALIDATION SUITE PASSED\n========================================\n\")"
     ],
     "deny": [],
     "ask": []
