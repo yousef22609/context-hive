@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
 set -eu
 
 # Usage: ./scripts/make_readinglist.sh <service_name> <task_name>

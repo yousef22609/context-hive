@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <title>Codex Audit Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    h1 { margin-bottom: 0.2rem; }
+    .status.FAIL { color: #c0392b; }
+    .status.PASS { color: #27ae60; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1.5rem; }
+    th, td { border: 1px solid #ddd; padding: 0.5rem; font-size: 0.9rem; }
+    th { background: #f4f4f4; }
+    tr:nth-child(even) { background: #fafafa; }
+    .filters { margin: 1rem 0; }
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 0.4rem; margin-right: 0.5rem; }
+    .badge.ERROR { background: #e74c3c; color: white; }
+    .badge.WARN { background: #f1c40f; color: #333; }
+    .badge.INFO { background: #3498db; color: white; }
+    .badge.docs { background: #9b59b6; color: white; }
+    .badge.hub { background: #16a085; color: white; }
+    .badge.examples { background: #2c3e50; color: white; }
+    .badge.template { background: #8e44ad; color: white; }
+    .badge.services { background: #34495e; color: white; }
+  </style>
+</head>
+<body>
+  <h1>Codex Audit Report</h1>
+  <p class="status PASS">ステータス: <strong>PASS</strong></p>
+  <div>
+    <span class="badge ERROR">ERROR: 0</span>
+    <span class="badge WARN">WARN: 0</span>
+    <span class="badge INFO">INFO: 47</span>
+  </div>
+  <div>
+    <span class="badge docs">docs: 47</span>
+  </div>
+  <p>重大な問題は検出されませんでした。</p>
+  <h2>推奨対応順序 (上位 10 件)</h2>
+  <ol>
+    <li>[INFO] docs/APPLICABILITY.md (line 1): 大項目が複数あるため目次セクションの追加を推奨します。</li><li>[INFO] docs/APPLICABILITY.md (line 1): 表記ゆれを検出しました: ['Requirements', 'requirements']</li><li>[INFO] docs/CODEX_AUDIT_GUIDE.md (line 1): 表記ゆれを検出しました: ['Requirements', 'requirements']</li><li>[INFO] docs/CODEX_AUDIT_GUIDE.md (line 1): 表記ゆれを検出しました: ['DESIGN', 'Design']</li><li>[INFO] docs/CODEX_AUDIT_GUIDE.md (line 1): 表記ゆれを検出しました: ['RULES', 'Rules']</li><li>[INFO] docs/DESIGN.md (line 1): 大項目が複数あるため目次セクションの追加を推奨します。</li><li>[INFO] docs/DESIGN.md (line 1): 表記ゆれを検出しました: ['Design', 'design']</li><li>[INFO] docs/REQUIREMENTS.md (line 1): 大項目が複数あるため目次セクションの追加を推奨します。</li><li>[INFO] docs/REQUIREMENTS.md (line 1): 表記ゆれを検出しました: ['Requirements', 'requirements']</li><li>[INFO] docs/RULES.md (line 1): 大項目が複数あるため目次セクションの追加を推奨します。</li>
+  </ol>
+  <div class="filters">
+    <label>Severity:
+      <select id="severityFilter">
+        <option value="">All</option>
+        <option value="ERROR">ERROR</option>
+        <option value="WARN">WARN</option>
+        <option value="INFO">INFO</option>
+      </select>
+    </label>
+    <label>Directory:
+      <select id="responsibilityFilter">
+        <option value="">All</option>
+        <option value="docs">docs</option>
+        <option value="hub">hub</option>
+        <option value="examples">examples</option>
+        <option value="template">template</option>
+        <option value="services">services</option>
+        <option value="other">other</option>
+        <option value="unknown">unknown</option>
+      </select>
+    </label>
+  </div>
+  <table id="auditTable">
+    <thead>
+      <tr>
+        <th>Severity</th>
+        <th>Tool</th>
+        <th>File</th>
+        <th>Line</th>
+        <th>Message</th>
+        <th>Ref</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/APPLICABILITY.md</td><td>1</td><td>大項目が複数あるため目次セクションの追加を推奨します。</td><td>structure:toc</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/APPLICABILITY.md</td><td>1</td><td>表記ゆれを検出しました: ['Requirements', 'requirements']</td><td>style:case-requirements</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/CODEX_AUDIT_GUIDE.md</td><td>1</td><td>表記ゆれを検出しました: ['Requirements', 'requirements']</td><td>style:case-requirements</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/CODEX_AUDIT_GUIDE.md</td><td>1</td><td>表記ゆれを検出しました: ['DESIGN', 'Design']</td><td>style:case-design</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/CODEX_AUDIT_GUIDE.md</td><td>1</td><td>表記ゆれを検出しました: ['RULES', 'Rules']</td><td>style:case-rules</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/DESIGN.md</td><td>1</td><td>大項目が複数あるため目次セクションの追加を推奨します。</td><td>structure:toc</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/DESIGN.md</td><td>1</td><td>表記ゆれを検出しました: ['Design', 'design']</td><td>style:case-design</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/REQUIREMENTS.md</td><td>1</td><td>大項目が複数あるため目次セクションの追加を推奨します。</td><td>structure:toc</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/REQUIREMENTS.md</td><td>1</td><td>表記ゆれを検出しました: ['Requirements', 'requirements']</td><td>style:case-requirements</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/RULES.md</td><td>1</td><td>大項目が複数あるため目次セクションの追加を推奨します。</td><td>structure:toc</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/RULES.md</td><td>1</td><td>表記ゆれを検出しました: ['Requirements', 'requirements']</td><td>style:case-requirements</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/RULES.md</td><td>1</td><td>表記ゆれを検出しました: ['Rules', 'rules']</td><td>style:case-rules</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/THEORY.md</td><td>1</td><td>大項目が複数あるため目次セクションの追加を推奨します。</td><td>structure:toc</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/THEORY.md</td><td>1</td><td>表記ゆれを検出しました: ['VISION', 'Vision', 'vision']</td><td>style:case-vision</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/THEORY.md</td><td>1</td><td>表記ゆれを検出しました: ['REQUIREMENTS', 'Requirements', 'requirements']</td><td>style:case-requirements</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/THEORY.md</td><td>1</td><td>表記ゆれを検出しました: ['DESIGN', 'Design', 'design']</td><td>style:case-design</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/THEORY.md</td><td>1</td><td>表記ゆれを検出しました: ['RULES', 'Rules', 'rules']</td><td>style:case-rules</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/VISION.md</td><td>1</td><td>大項目が複数あるため目次セクションの追加を推奨します。</td><td>structure:toc</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/VISION.md</td><td>1</td><td>表記ゆれを検出しました: ['Vision', 'vision']</td><td>style:case-vision</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/VISION.md</td><td>1</td><td>表記ゆれを検出しました: ['Requirements', 'requirements']</td><td>style:case-requirements</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/VISION.md</td><td>1</td><td>表記ゆれを検出しました: ['Design', 'design']</td><td>style:case-design</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/VISION.md</td><td>1</td><td>表記ゆれを検出しました: ['Rules', 'rules']</td><td>style:case-rules</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/best-practices.md</td><td>1</td><td>大項目が複数あるため目次セクションの追加を推奨します。</td><td>structure:toc</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/best-practices.md</td><td>1</td><td>表記ゆれを検出しました: ['VISION', 'Vision', 'vision']</td><td>style:case-vision</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/best-practices.md</td><td>1</td><td>表記ゆれを検出しました: ['REQUIREMENTS', 'Requirements', 'requirements']</td><td>style:case-requirements</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/best-practices.md</td><td>1</td><td>表記ゆれを検出しました: ['DESIGN', 'Design', 'design']</td><td>style:case-design</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/comparison.md</td><td>1</td><td>大項目が複数あるため目次セクションの追加を推奨します。</td><td>structure:toc</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/comparison.md</td><td>1</td><td>表記ゆれを検出しました: ['VISION', 'vision']</td><td>style:case-vision</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/comparison.md</td><td>1</td><td>表記ゆれを検出しました: ['REQUIREMENTS', 'requirements']</td><td>style:case-requirements</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/comparison.md</td><td>1</td><td>表記ゆれを検出しました: ['DESIGN', 'Design', 'design']</td><td>style:case-design</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/concepts.md</td><td>1</td><td>大項目が複数あるため目次セクションの追加を推奨します。</td><td>structure:toc</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/concepts.md</td><td>1</td><td>表記ゆれを検出しました: ['Vision', 'vision']</td><td>style:case-vision</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/concepts.md</td><td>1</td><td>表記ゆれを検出しました: ['Requirements', 'requirements']</td><td>style:case-requirements</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/concepts.md</td><td>1</td><td>表記ゆれを検出しました: ['Design', 'design']</td><td>style:case-design</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/getting-started.md</td><td>207</td><td>見出しレベルが飛び級しています: H2 → H4 (Step 6: Create Rules Document (3 minutes))</td><td>heading:hierarchy</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/getting-started.md</td><td>1</td><td>大項目が複数あるため目次セクションの追加を推奨します。</td><td>structure:toc</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/getting-started.md</td><td>1</td><td>表記ゆれを検出しました: ['VISION', 'Vision', 'vision']</td><td>style:case-vision</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/getting-started.md</td><td>1</td><td>表記ゆれを検出しました: ['REQUIREMENTS', 'Requirements', 'requirements']</td><td>style:case-requirements</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/getting-started.md</td><td>1</td><td>表記ゆれを検出しました: ['DESIGN', 'Design', 'design']</td><td>style:case-design</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/getting-started.md</td><td>1</td><td>表記ゆれを検出しました: ['RULES', 'Rules', 'rules']</td><td>style:case-rules</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/philosophy.md</td><td>1</td><td>大項目が複数あるため目次セクションの追加を推奨します。</td><td>structure:toc</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/philosophy.md</td><td>1</td><td>表記ゆれを検出しました: ['Design', 'design']</td><td>style:case-design</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/process.md</td><td>1</td><td>大項目が複数あるため目次セクションの追加を推奨します。</td><td>structure:toc</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/process.md</td><td>1</td><td>表記ゆれを検出しました: ['VISION', 'Vision', 'vision']</td><td>style:case-vision</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/process.md</td><td>1</td><td>表記ゆれを検出しました: ['REQUIREMENTS', 'Requirements', 'requirements']</td><td>style:case-requirements</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/process.md</td><td>1</td><td>表記ゆれを検出しました: ['DESIGN', 'Design', 'design']</td><td>style:case-design</td></tr><tr data-severity='INFO' data-resp='docs'><td>INFO</td><td>lint_docs</td><td>docs/process.md</td><td>1</td><td>表記ゆれを検出しました: ['RULES', 'Rules', 'rules']</td><td>style:case-rules</td></tr>
+    </tbody>
+  </table>
+  <script>
+    const severityFilter = document.getElementById('severityFilter');
+    const responsibilityFilter = document.getElementById('responsibilityFilter');
+    const rows = document.querySelectorAll('#auditTable tbody tr');
+
+    function applyFilters() {
+      const severity = severityFilter.value;
+      const responsibility = responsibilityFilter.value;
+      rows.forEach(row => {
+        const rowSeverity = row.getAttribute('data-severity');
+        const rowResp = row.getAttribute('data-resp');
+        const matchesSeverity = !severity || rowSeverity === severity;
+        const matchesResp = !responsibility || rowResp === responsibility;
+        row.style.display = matchesSeverity && matchesResp ? '' : 'none';
+      });
+    }
+
+    severityFilter.addEventListener('change', applyFilters);
+    responsibilityFilter.addEventListener('change', applyFilters);
+  </script>
+</body>
+</html>

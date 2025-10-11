@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: MIT
 # Context Hive Project Initializer
 
 set -e  # Exit on error
@@ -99,10 +100,10 @@ echo "✅ Context Hive project initialized successfully!"
 echo ""
 echo "📋 Next steps:"
 echo "  1. Fill in docs/ with your project details:"
-echo "     - docs/vision.md (project vision and goals)"
-echo "     - docs/requirements.md (functional requirements)"
-echo "     - docs/design.md (technical architecture)"
-echo "     - docs/rules.md (development standards)"
+echo "     - docs/VISION.md (project vision and goals)"
+echo "     - docs/REQUIREMENTS.md (functional requirements)"
+echo "     - docs/DESIGN.md (technical architecture)"
+echo "     - docs/RULES.md (development standards)"
 echo ""
 echo "  2. Create your first service in services/"
 echo "     - mkdir -p services/my_service/app"

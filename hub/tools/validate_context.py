@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """
 Context Validator
 
@@ -122,10 +123,10 @@ def validate_context(strict: bool = False):
 
     # Check for four pillar documents
     pillars = [
-        "docs/vision.md",
-        "docs/requirements.md",
-        "docs/design.md",
-        "docs/rules.md"
+        "docs/VISION.md",
+        "docs/REQUIREMENTS.md",
+        "docs/DESIGN.md",
+        "docs/RULES.md"
     ]
     missing_pillars = []
     for pillar in pillars:

@@ -1,7 +1,7 @@
 """Tests for Context Hive Minimal Example API.
 
 These tests verify that the implementation matches the requirements
-specified in docs/requirements.md.
+specified in docs/REQUIREMENTS.md.
 """
 
 from fastapi.testclient import TestClient
@@ -13,7 +13,7 @@ client = TestClient(app)
 def test_read_root():
     """Test root endpoint returns correct message.
 
-    Verifies FR1 from docs/requirements.md:
+    Verifies FR1 from docs/REQUIREMENTS.md:
     - Endpoint: GET /
     - Status: 200 OK
     - Response: {"message": "Hello from Context Hive minimal example"}
@@ -26,7 +26,7 @@ def test_read_root():
 def test_health():
     """Test health check endpoint returns healthy status.
 
-    Verifies FR2 from docs/requirements.md:
+    Verifies FR2 from docs/REQUIREMENTS.md:
     - Endpoint: GET /health
     - Status: 200 OK
     - Response: {"status": "ok"}
@@ -39,7 +39,7 @@ def test_health():
 def test_openapi_docs_available():
     """Test that automatic OpenAPI documentation is available.
 
-    Verifies NFR3 from docs/requirements.md:
+    Verifies NFR3 from docs/REQUIREMENTS.md:
     - Auto-generated docs at /openapi.json
     """
     response = client.get("/openapi.json")

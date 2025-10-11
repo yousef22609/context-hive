@@ -142,20 +142,20 @@ The Hub solves these by:
 ### Example workflow
 
 ```bash
-# 1. Define a new service
+## 1. Define a new service
 vim services/auth_service/service.meta.yaml
 
-# 2. Regenerate dependency graph
+## 2. Regenerate dependency graph
 python hub/tools/build_graph.py
 
-# 3. Validate all references
+## 3. Validate all references
 python hub/tools/validate_context.py
 
-# 4. Generate reading list for implementation task
+## 4. Generate reading list for implementation task
 python hub/tools/gen_reading_list.py auth_service implement_login
 
-# 5. AI reads documents in generated order
-# 6. AI implements the feature with full context
+## 5. AI reads documents in generated order
+## 6. AI implements the feature with full context
 ```
 
 ## Token Economy

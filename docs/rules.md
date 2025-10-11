@@ -2,6 +2,8 @@
 
 This document defines the development standards, conventions, and constraints for Context Hive projects.
 
+For architectural context and component responsibilities, review the corresponding [Design specification](DESIGN.md) when applying these rules.
+
 ## Documentation Standards
 
 ### Document Structure
@@ -15,7 +17,7 @@ This document defines the development standards, conventions, and constraints fo
 
 **Example structure**:
 ```markdown
-# Document Title
+## Document Title
 
 ## Section 1
 Content...
@@ -94,7 +96,7 @@ def function_name(param: str) -> bool:
 
 **Error handling**:
 ```python
-# Good: Explicit error handling
+## Good: Explicit error handling
 try:
     with open(file_path) as f:
         data = json.load(f)
@@ -105,7 +107,7 @@ except json.JSONDecodeError:
     print(f"❌ Invalid JSON: {file_path}")
     return False
 
-# Bad: Bare except
+## Bad: Bare except
 try:
     data = json.load(open(file_path))
 except:
@@ -122,7 +124,7 @@ except:
 
 **API endpoints**:
 ```python
-# Good: Clear, documented endpoint
+## Good: Clear, documented endpoint
 @app.post("/api/auth/login")
 def login(credentials: LoginRequest) -> LoginResponse:
     """
@@ -192,7 +194,7 @@ services/[service_name]/
 - No database, no network, no file I/O
 
 ```python
-# Good unit test
+## Good unit test
 def test_validate_email_format():
     """Test email validation accepts valid formats"""
     assert validate_email("user@example.com") is True
@@ -207,7 +209,7 @@ def test_validate_email_format():
 - Run in isolated environment
 
 ```python
-# Good integration test
+## Good integration test
 def test_create_user_stores_in_database(test_db):
     """Test user creation persists to database"""
     user_service = UserService(test_db)
@@ -224,7 +226,7 @@ def test_create_user_stores_in_database(test_db):
 - Run before deployment
 
 ```python
-# Good E2E test
+## Good E2E test
 def test_complete_login_flow(api_client):
     """Test user can register, login, and access protected resource"""
     # Register
@@ -349,11 +351,11 @@ def test_fetch_user_profile(mocker):
 
 **In code**:
 ```python
-# Good
+## Good
 import os
 api_key = os.environ.get("API_KEY")
 
-# Bad
+## Bad
 api_key = "sk-1234567890abcdef"
 ```
 
@@ -408,12 +410,12 @@ api_key = "sk-1234567890abcdef"
 
 **Cache strategy**:
 ```python
-# Good: Cache with TTL
+## Good: Cache with TTL
 @cache(ttl=300)  # 5 minutes
 def get_user_profile(user_id: int):
     return db.query(User).filter(User.id == user_id).first()
 
-# Bad: Cache without invalidation
+## Bad: Cache without invalidation
 @cache()
 def get_user_profile(user_id: int):
     return db.query(User).filter(User.id == user_id).first()

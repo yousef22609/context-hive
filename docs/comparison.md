@@ -342,15 +342,15 @@ Context Hive builds on design doc culture:
 Yes! Many design doc templates can be adapted:
 
 **Google design doc → Context Hive**:
-- "Context and Scope" → `docs/vision.md`
-- "Goals and Non-Goals" → `docs/requirements.md`
-- "Design" → `docs/design.md`
-- "Alternatives Considered" → Add to `docs/design.md`
+- "Context and Scope" → `docs/VISION.md`
+- "Goals and Non-Goals" → `docs/REQUIREMENTS.md`
+- "Design" → `docs/DESIGN.md`
+- "Alternatives Considered" → Add to `docs/DESIGN.md`
 
 **Amazon PR/FAQ → Context Hive**:
-- PR → `docs/vision.md`
-- FAQ → `docs/requirements.md`
-- Technical sections → `docs/design.md`
+- PR → `docs/VISION.md`
+- FAQ → `docs/REQUIREMENTS.md`
+- Technical sections → `docs/DESIGN.md`
 
 ## Summary: When to Use Context Hive
 

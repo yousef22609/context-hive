@@ -109,10 +109,10 @@ This service is fully integrated with Context Hive Hub:
 ### Dependencies
 
 As defined in `service.meta.yaml`, this service depends on:
-- `docs/vision.md` - Project vision
-- `docs/requirements.md` - Functional requirements
-- `docs/design.md` - Technical design
-- `docs/rules.md` - Development standards
+- `docs/VISION.md` - Project vision
+- `docs/REQUIREMENTS.md` - Functional requirements
+- `docs/DESIGN.md` - Technical design
+- `docs/RULES.md` - Development standards
 
 ### Tasks
 
@@ -136,7 +136,7 @@ This generates an optimized reading list at:
 Before making changes:
 ```bash
 # Update relevant docs (vision, requirements, design, rules)
-vim docs/requirements.md
+vim docs/REQUIREMENTS.md
 
 # Validate context
 python hub/tools/validate_context.py

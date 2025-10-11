@@ -1,0 +1,18 @@
+staleness_threshold_days: 90
+required_docs:
+  - docs/VISION.md
+  - docs/REQUIREMENTS.md
+  - docs/DESIGN.md
+  - docs/RULES.md
+  - docs/APPLICABILITY.md
+  - docs/THEORY.md
+required_sections:
+  - "## 背景"
+  - "## 目的"
+  - "## 適用範囲"
+  - "## 前提"
+  - "## 変更管理"
+link_ignore_patterns:
+  - "^https?://localhost"
+  - "^#"
+allow_todo_days: 30

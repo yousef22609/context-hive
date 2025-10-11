@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
 set -eu
 
 # Usage: ./scripts/release_notes.sh [from_tag] [to_tag]

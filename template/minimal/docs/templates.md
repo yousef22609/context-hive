@@ -866,7 +866,7 @@ Example:
 - README.md with quick start instructions
 - API documentation auto-generated (FastAPI /docs)
 - Context Hive docs updated when design changes
-- Keep docs/vision.md, requirements.md, design.md, rules.md current
+- Keep docs/VISION.md, requirements.md, design.md, rules.md current
 
 ## Patterns to Use
 

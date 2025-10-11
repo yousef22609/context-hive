@@ -5,7 +5,7 @@
       "Bash(python:*)",
       "Bash(python3:*)",
       "Bash(cat:*)",
-      "Bash(for doc in docs/vision.md docs/requirements.md docs/design.md docs/rules.md)",
+      "Bash(for doc in docs/VISION.md docs/REQUIREMENTS.md docs/DESIGN.md docs/RULES.md)",
       "Bash(do if [ -f \"$doc\" ])",
       "Bash(else echo \"❌ $doc MISSING\")",
       "Bash(fi)",
@@ -18,7 +18,8 @@
       "Bash(mkdir:*)",
       "Bash(bash scripts/validate_all.sh:*)",
       "Bash(dos2unix:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

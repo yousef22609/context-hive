@@ -1,0 +1,512 @@
+{
+  "generated_at": "2025-10-11T12:13:43.878189+00:00",
+  "summary": {
+    "counts": {
+      "INFO": 47
+    },
+    "total": 47,
+    "tools": {
+      "lint_docs": {
+        "INFO": 47
+      }
+    },
+    "responsibility": {
+      "docs": 47
+    }
+  },
+  "gating": {
+    "status": "PASS",
+    "reasons": [],
+    "counts": {
+      "INFO": 47
+    },
+    "totals": {
+      "counts": {
+        "INFO": 47
+      },
+      "total": 47,
+      "tools": {
+        "lint_docs": {
+          "INFO": 47
+        }
+      },
+      "responsibility": {
+        "docs": 47
+      }
+    },
+    "staleness_errors": 0,
+    "secrets_hits": 0,
+    "warn_threshold_exceeded": false,
+    "required_doc_missing": false
+  },
+  "recommendations": [
+    {
+      "priority": 1,
+      "tool": "lint_docs",
+      "file": "docs/APPLICABILITY.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "大項目が複数あるため目次セクションの追加を推奨します。",
+      "ref": "structure:toc"
+    },
+    {
+      "priority": 2,
+      "tool": "lint_docs",
+      "file": "docs/APPLICABILITY.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Requirements', 'requirements']",
+      "ref": "style:case-requirements"
+    },
+    {
+      "priority": 3,
+      "tool": "lint_docs",
+      "file": "docs/CODEX_AUDIT_GUIDE.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Requirements', 'requirements']",
+      "ref": "style:case-requirements"
+    },
+    {
+      "priority": 4,
+      "tool": "lint_docs",
+      "file": "docs/CODEX_AUDIT_GUIDE.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['DESIGN', 'Design']",
+      "ref": "style:case-design"
+    },
+    {
+      "priority": 5,
+      "tool": "lint_docs",
+      "file": "docs/CODEX_AUDIT_GUIDE.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['RULES', 'Rules']",
+      "ref": "style:case-rules"
+    },
+    {
+      "priority": 6,
+      "tool": "lint_docs",
+      "file": "docs/DESIGN.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "大項目が複数あるため目次セクションの追加を推奨します。",
+      "ref": "structure:toc"
+    },
+    {
+      "priority": 7,
+      "tool": "lint_docs",
+      "file": "docs/DESIGN.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Design', 'design']",
+      "ref": "style:case-design"
+    },
+    {
+      "priority": 8,
+      "tool": "lint_docs",
+      "file": "docs/REQUIREMENTS.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "大項目が複数あるため目次セクションの追加を推奨します。",
+      "ref": "structure:toc"
+    },
+    {
+      "priority": 9,
+      "tool": "lint_docs",
+      "file": "docs/REQUIREMENTS.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Requirements', 'requirements']",
+      "ref": "style:case-requirements"
+    },
+    {
+      "priority": 10,
+      "tool": "lint_docs",
+      "file": "docs/RULES.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "大項目が複数あるため目次セクションの追加を推奨します。",
+      "ref": "structure:toc"
+    }
+  ],
+  "items": [
+    {
+      "tool": "lint_docs",
+      "file": "docs/APPLICABILITY.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "大項目が複数あるため目次セクションの追加を推奨します。",
+      "ref": "structure:toc"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/APPLICABILITY.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Requirements', 'requirements']",
+      "ref": "style:case-requirements"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/CODEX_AUDIT_GUIDE.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Requirements', 'requirements']",
+      "ref": "style:case-requirements"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/CODEX_AUDIT_GUIDE.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['DESIGN', 'Design']",
+      "ref": "style:case-design"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/CODEX_AUDIT_GUIDE.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['RULES', 'Rules']",
+      "ref": "style:case-rules"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/DESIGN.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "大項目が複数あるため目次セクションの追加を推奨します。",
+      "ref": "structure:toc"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/DESIGN.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Design', 'design']",
+      "ref": "style:case-design"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/REQUIREMENTS.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "大項目が複数あるため目次セクションの追加を推奨します。",
+      "ref": "structure:toc"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/REQUIREMENTS.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Requirements', 'requirements']",
+      "ref": "style:case-requirements"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/RULES.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "大項目が複数あるため目次セクションの追加を推奨します。",
+      "ref": "structure:toc"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/RULES.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Requirements', 'requirements']",
+      "ref": "style:case-requirements"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/RULES.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Rules', 'rules']",
+      "ref": "style:case-rules"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/THEORY.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "大項目が複数あるため目次セクションの追加を推奨します。",
+      "ref": "structure:toc"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/THEORY.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['VISION', 'Vision', 'vision']",
+      "ref": "style:case-vision"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/THEORY.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['REQUIREMENTS', 'Requirements', 'requirements']",
+      "ref": "style:case-requirements"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/THEORY.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['DESIGN', 'Design', 'design']",
+      "ref": "style:case-design"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/THEORY.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['RULES', 'Rules', 'rules']",
+      "ref": "style:case-rules"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/VISION.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "大項目が複数あるため目次セクションの追加を推奨します。",
+      "ref": "structure:toc"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/VISION.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Vision', 'vision']",
+      "ref": "style:case-vision"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/VISION.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Requirements', 'requirements']",
+      "ref": "style:case-requirements"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/VISION.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Design', 'design']",
+      "ref": "style:case-design"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/VISION.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Rules', 'rules']",
+      "ref": "style:case-rules"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/best-practices.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "大項目が複数あるため目次セクションの追加を推奨します。",
+      "ref": "structure:toc"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/best-practices.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['VISION', 'Vision', 'vision']",
+      "ref": "style:case-vision"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/best-practices.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['REQUIREMENTS', 'Requirements', 'requirements']",
+      "ref": "style:case-requirements"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/best-practices.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['DESIGN', 'Design', 'design']",
+      "ref": "style:case-design"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/comparison.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "大項目が複数あるため目次セクションの追加を推奨します。",
+      "ref": "structure:toc"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/comparison.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['VISION', 'vision']",
+      "ref": "style:case-vision"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/comparison.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['REQUIREMENTS', 'requirements']",
+      "ref": "style:case-requirements"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/comparison.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['DESIGN', 'Design', 'design']",
+      "ref": "style:case-design"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/concepts.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "大項目が複数あるため目次セクションの追加を推奨します。",
+      "ref": "structure:toc"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/concepts.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Vision', 'vision']",
+      "ref": "style:case-vision"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/concepts.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Requirements', 'requirements']",
+      "ref": "style:case-requirements"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/concepts.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Design', 'design']",
+      "ref": "style:case-design"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/getting-started.md",
+      "line": 207,
+      "severity": "INFO",
+      "message": "見出しレベルが飛び級しています: H2 → H4 (Step 6: Create Rules Document (3 minutes))",
+      "ref": "heading:hierarchy"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/getting-started.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "大項目が複数あるため目次セクションの追加を推奨します。",
+      "ref": "structure:toc"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/getting-started.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['VISION', 'Vision', 'vision']",
+      "ref": "style:case-vision"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/getting-started.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['REQUIREMENTS', 'Requirements', 'requirements']",
+      "ref": "style:case-requirements"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/getting-started.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['DESIGN', 'Design', 'design']",
+      "ref": "style:case-design"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/getting-started.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['RULES', 'Rules', 'rules']",
+      "ref": "style:case-rules"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/philosophy.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "大項目が複数あるため目次セクションの追加を推奨します。",
+      "ref": "structure:toc"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/philosophy.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['Design', 'design']",
+      "ref": "style:case-design"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/process.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "大項目が複数あるため目次セクションの追加を推奨します。",
+      "ref": "structure:toc"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/process.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['VISION', 'Vision', 'vision']",
+      "ref": "style:case-vision"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/process.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['REQUIREMENTS', 'Requirements', 'requirements']",
+      "ref": "style:case-requirements"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/process.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['DESIGN', 'Design', 'design']",
+      "ref": "style:case-design"
+    },
+    {
+      "tool": "lint_docs",
+      "file": "docs/process.md",
+      "line": 1,
+      "severity": "INFO",
+      "message": "表記ゆれを検出しました: ['RULES', 'Rules', 'rules']",
+      "ref": "style:case-rules"
+    }
+  ]
+}

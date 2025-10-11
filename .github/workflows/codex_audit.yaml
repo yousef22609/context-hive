@@ -1,0 +1,65 @@
+name: Codex Audit
+
+on:
+  push:
+    branches: [develop, master]
+  pull_request:
+    branches: [develop, master]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  audit:
+    name: Run Codex Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install gitleaks
+        run: |
+          GITLEAKS_VERSION=8.18.1
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" -o gitleaks.tar.gz
+          tar -xzf gitleaks.tar.gz gitleaks
+          sudo mv gitleaks /usr/local/bin/gitleaks
+          rm gitleaks.tar.gz
+
+      - name: Run codex audit
+        run: |
+          chmod +x scripts/audit_codex.sh
+          scripts/audit_codex.sh
+
+      - name: Upload audit artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-audit-report
+          path: reports/codex/
+
+      - name: Commit audit report (develop only)
+        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "codex-audit-bot"
+          git config user.email "codex-audit-bot@users.noreply.github.com"
+          if git status --porcelain reports/codex/audit.json reports/codex/audit.html | grep .; then
+            git add reports/codex/audit.json reports/codex/audit.html
+            git commit -m "chore(reports): update codex audit"
+            git push
+          else
+            echo "No audit report changes to commit."
+          fi

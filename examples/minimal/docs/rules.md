@@ -86,7 +86,7 @@ def read_root():
 - Prefer self-documenting code over comments
 - Link back to Context Hive docs when relevant:
   ```python
-  # See docs/requirements.md FR1 for specification
+  # See docs/REQUIREMENTS.md FR1 for specification
   ```
 
 ## Testing Requirements

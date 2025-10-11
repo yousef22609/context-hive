@@ -89,6 +89,12 @@ Context Hive is built around three key components working together:
 2. **Try the minimal example**: [examples/minimal/](examples/minimal/)
 3. **Use the template**: [template/minimal/](template/minimal/)
 
+## Developer Checks
+
+- Run `pre-commit install` after cloning to enable the shared linting suite (Black, Ruff, mypy, markdownlint, codespell, prettier, etc.).
+- Execute `scripts/audit_codex.sh` to run the full codex audit locally. Results are written to `reports/codex/audit.json` and `reports/codex/audit.html`.
+- See [docs/CODEX_AUDIT_GUIDE.md](docs/CODEX_AUDIT_GUIDE.md) for audit criteria, pass/fail gates, and triage workflow.
+
 ## Documentation
 
 ### Getting Started

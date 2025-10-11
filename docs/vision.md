@@ -1,5 +1,25 @@
 # Vision: Context Hive
 
+## 背景
+- AI が断片的なコンテキストしか受け取れず、品質や一貫性が安定しない現状を解決したい。
+- Day 0 から AI をチームメンバーとして参加させ、ドキュメントを中核に据える必要がある。
+
+## 目的
+- コンテキストに基づく意思決定を AI に委任し、開発速度と品質を同時に高める。
+- ヒト/AI 双方が迷わず参照できる生きたドキュメント体系を維持する。
+
+## 適用範囲
+- 新規開発またはドキュメント駆動のチームを対象にした AI コラボレーション手法。
+- 10〜100 サービス規模、継続期間 3 ヶ月以上のプロジェクトを想定。
+
+## 前提
+- ドキュメント作成に投資できる体制であること。
+- チームが AI を共同開発者として受け入れるマインドセットを持っていること。
+
+## 変更管理
+- Vision の更新は他ドキュメント（Requirements/Design/Rules）との整合性レビュー後に実施する。
+- 更新履歴を Pull Request と codex audit レポートで追跡し、最新状態を保証する。
+
 ## Problem Statement
 
 Modern software development struggles with AI integration. Current approaches treat AI as a code completion tool rather than a true collaborator. This leads to:

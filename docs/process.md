@@ -60,10 +60,10 @@ Phase 5: Deployment    (Human-approved)
 
 ### Deliverables
 
-- ✅ `docs/vision.md` - Complete project vision
-- ✅ `docs/requirements.md` - Comprehensive requirements
-- ✅ `docs/design.md` - Detailed architecture design
-- ✅ `docs/rules.md` - Development standards
+- ✅ `docs/VISION.md` - Complete project vision
+- ✅ `docs/REQUIREMENTS.md` - Comprehensive requirements
+- ✅ `docs/DESIGN.md` - Detailed architecture design
+- ✅ `docs/RULES.md` - Development standards
 - ✅ `services/*/service.meta.yaml` - Service metadata for all planned services
 - ✅ `hub/meta/graph.json` - Initial dependency graph
 - ✅ Validation passing (`python hub/tools/validate_context.py`)
@@ -127,7 +127,7 @@ This might feel like a lot, but it:
 
 ### Deliverables
 
-- ✅ Updated `docs/requirements.md` with:
+- ✅ Updated `docs/REQUIREMENTS.md` with:
   - Prioritized requirements
   - Clear acceptance criteria
   - Risk assessment
@@ -193,7 +193,7 @@ Typical duration: **5-10% of total project time**
 
 **Example prompt for API documentation**:
 ```
-Given the requirements in docs/requirements.md and the design in docs/design.md,
+Given the requirements in docs/REQUIREMENTS.md and the design in docs/DESIGN.md,
 generate detailed API documentation for the [service_name] service.
 
 Include:
@@ -203,7 +203,7 @@ Include:
 - Authentication requirements
 - Rate limiting
 
-Follow the format in docs/rules.md.
+Follow the format in docs/RULES.md.
 ```
 
 ### Deliverables

@@ -44,10 +44,10 @@ You'll create 4 core documents. We'll use our minimal template as a starting poi
 
 #### Step 3: Create Vision Document (4 minutes)
 
-Create `docs/vision.md`:
+Create `docs/VISION.md`:
 
 ```markdown
-# Task Management API - Vision
+## Task Management API - Vision
 
 ## Problem Statement
 Developers need a simple API to manage tasks for their personal projects. Existing solutions are too complex or lack proper REST API design.
@@ -78,10 +78,10 @@ A clean, well-documented REST API for task management that can be understood and
 
 #### Step 4: Create Requirements Document (4 minutes)
 
-Create `docs/requirements.md`:
+Create `docs/REQUIREMENTS.md`:
 
 ```markdown
-# Task Management API - Requirements
+## Task Management API - Requirements
 
 ## Functional Requirements
 
@@ -140,10 +140,10 @@ Create `docs/requirements.md`:
 
 #### Step 5: Create Design Document (4 minutes)
 
-Create `docs/design.md`:
+Create `docs/DESIGN.md`:
 
 ```markdown
-# Task Management API - Design
+## Task Management API - Design
 
 ## Technology Stack
 - **Framework**: FastAPI (for auto-docs and performance)
@@ -184,11 +184,11 @@ GET    /               → root() [health check]
 
 ### Storage Design
 ```python
-# Global in-memory store
+## Global in-memory store
 tasks: Dict[UUID, Task] = {}
 
-# Thread-safe access using FastAPI's dependency injection
-# (FastAPI is async-safe by default)
+## Thread-safe access using FastAPI's dependency injection
+## (FastAPI is async-safe by default)
 ```
 
 ## Error Handling Strategy
@@ -206,10 +206,10 @@ FastAPI provides automatic OpenAPI docs at:
 
 #### Step 6: Create Rules Document (3 minutes)
 
-Create `docs/rules.md`:
+Create `docs/RULES.md`:
 
 ```markdown
-# Task Management API - Rules
+## Task Management API - Rules
 
 ## Code Style
 - Follow PEP 8 Python style guide
@@ -254,7 +254,7 @@ def create_task(task_data: TaskCreate) -> Task:
 
 ### Error Handling
 ```python
-# Use FastAPI's HTTPException
+## Use FastAPI's HTTPException
 from fastapi import HTTPException
 
 if task_id not in tasks:
@@ -295,10 +295,10 @@ I'm building a Task Management API using Context Hive methodology.
 I've created four foundational documents. Please read them carefully
 as they contain all the decisions we've made together.
 
-[Paste or upload docs/vision.md]
-[Paste or upload docs/requirements.md]
-[Paste or upload docs/design.md]
-[Paste or upload docs/rules.md]
+[Paste or upload docs/VISION.md]
+[Paste or upload docs/REQUIREMENTS.md]
+[Paste or upload docs/DESIGN.md]
+[Paste or upload docs/RULES.md]
 
 Do you understand the project? Please summarize the key points.
 ```
@@ -346,13 +346,13 @@ Please update according to REST best practices.
 #### Step 10: Run the Implementation
 
 ```bash
-# Install dependencies
+## Install dependencies
 pip install -r requirements.txt
 
-# Run the server
+## Run the server
 uvicorn app.main:app --reload
 
-# Open browser
+## Open browser
 open http://localhost:8000/docs
 ```
 

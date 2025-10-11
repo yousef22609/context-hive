@@ -4,10 +4,10 @@ This minimal API demonstrates Context Hive methodology:
 documentation-driven development with AI as a team member from Day 0.
 
 See docs/ directory for complete Context Hive documentation:
-- docs/vision.md - Why we built this
-- docs/requirements.md - What it must do
-- docs/design.md - How it's structured
-- docs/rules.md - Coding standards
+- docs/VISION.md - Why we built this
+- docs/REQUIREMENTS.md - What it must do
+- docs/DESIGN.md - How it's structured
+- docs/RULES.md - Coding standards
 """
 
 from fastapi import FastAPI

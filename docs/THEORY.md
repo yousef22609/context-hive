@@ -292,7 +292,7 @@ This theory is not fixed. It evolves through:
 - Community experimentation
 - Tool advancement
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) to share your experiences and insights.
+See [CONTRIBUTING.md](../CONTRIBUTING.md) to share your experiences and insights.
 
 ---
 

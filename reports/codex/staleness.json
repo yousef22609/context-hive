@@ -1,0 +1,13 @@
+{
+  "tool": "staleness",
+  "generated_at": "2025-10-11T12:13:09.159295+00:00",
+  "summary": {
+    "counts": {},
+    "total": 0
+  },
+  "items": [],
+  "extra": {
+    "threshold_days": 90,
+    "todo_threshold_days": 30
+  }
+}

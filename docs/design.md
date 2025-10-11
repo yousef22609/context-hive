@@ -4,6 +4,8 @@
 
 The Sample Service is a minimal REST API built with FastAPI demonstrating Context Hive methodology. It follows a simple, stateless architecture with no external dependencies.
 
+For implementation constraints and coding standards, see the shared [Rules handbook](RULES.md), which should be read alongside this design.
+
 ### System Context
 
 ```
