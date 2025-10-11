@@ -1,7 +1,7 @@
 # Reading List: sample_service - implement_api
 
-**Generated**: 2025-10-11 16:41:35
-**Estimated tokens**: 10330
+**Generated**: 2025-10-11 20:43:20
+**Estimated tokens**: 10347
 
 ## Read in this order:
 
@@ -23,6 +23,6 @@
 
 5. [services/sample_service/service.meta.yaml](../../../../services/sample_service/service.meta.yaml)
    - Purpose: Service-specific metadata, dependencies, and task definitions
-   - Estimated tokens: ~91
+   - Estimated tokens: ~108
 
-**Total**: 10330 tokens
+**Total**: 10347 tokens

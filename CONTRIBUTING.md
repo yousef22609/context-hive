@@ -67,6 +67,28 @@ Build tools that support Context Hive:
 
 ## How to Contribute
 
+### Branch Workflow
+
+Context Hive uses a **develop → master** workflow:
+
+- **develop**: Active development branch - all work starts here
+- **master**: Protected production branch - public releases only
+
+**Important**: Always base your work on `develop`:
+```bash
+git clone https://github.com/Petsuro85/context-hive.git
+cd context-hive
+git checkout develop  # Start from develop, not master
+```
+
+**Pull Requests**: Should target `develop` branch, NOT `master`.
+
+**Protection**: The `master` branch is protected with:
+- Required code review (minimum 1 approval)
+- Status checks must pass (CI validation)
+- Direct pushes disabled
+- Commit signing required
+
 ### Quick Contributions (No PR needed)
 For small fixes and suggestions:
 1. Open an issue describing the improvement
@@ -75,32 +97,50 @@ For small fixes and suggestions:
 ### Standard Contributions (PR workflow)
 For substantial changes:
 
-1. **Fork the repository**
+1. **Fork and clone the repository**
    ```bash
-   git clone https://github.com/Petsuro85/context-hive.git
+   git clone https://github.com/YOUR_USERNAME/context-hive.git
    cd context-hive
+   git checkout develop  # Important: start from develop
    ```
 
-2. **Create a branch**
+2. **Set up development environment**
+   ```bash
+   bash scripts/bootstrap_dev.sh
+   # This installs dependencies, sets up pre-commit hooks, and validates
+   ```
+
+3. **Create a feature branch from develop**
    ```bash
    git checkout -b feature/your-contribution-name
    ```
 
-3. **Make your changes**
+4. **Make your changes**
    - Follow existing document structure
    - Maintain consistent tone (practical, honest, no hype)
    - Test examples work as documented
 
-4. **Commit with clear messages**
+5. **Run validation before committing**
    ```bash
-   git commit -m "Add case study for e-commerce API project"
+   bash scripts/validate_all.sh
+   # Must pass with 0 errors and 0 warnings in strict mode
    ```
 
-5. **Push and create Pull Request**
+6. **Commit with Conventional Commits format**
+   ```bash
+   # Format: <type>: <description>
+   # Types: feat, fix, docs, refactor, test, chore
+
+   git commit -m "feat: add case study for e-commerce API project"
+   git commit -m "docs: clarify Phase 0 requirements"
+   git commit -m "fix: correct schema validation error"
+   ```
+
+7. **Push and create Pull Request**
    ```bash
    git push origin feature/your-contribution-name
    ```
-   Then open PR on GitHub
+   Then open PR on GitHub targeting `develop` branch
 
 ### Case Study Contributions
 To contribute a case study:

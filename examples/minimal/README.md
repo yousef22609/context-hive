@@ -47,3 +47,48 @@ Human: "I've created 4 Context Hive documents. Please read them."
 
 AI: "I understand. You're building a minimal FastAPI example with
      two endpoints following the documented requirements and rules."
+```
+
+### Reading Order and Review Process (Required)
+
+When working with this example or creating your own service, follow this workflow:
+
+1. **Generate Reading List**: Run `hub/tools/gen_reading_list.py` to generate the optimal reading order for your task
+2. **Provide Context to AI**: Share the generated reading list with Claude/ChatGPT to get implementation proposals
+3. **Human Review**: Review the AI's proposal for:
+   - Discrepancies with documentation
+   - Missing assumptions or context
+   - Edge cases not covered
+4. **Validate**: Run `hub/tools/validate_context.py --strict` to ensure zero inconsistencies between docs and implementation
+
+This process ensures that both AI and humans are working from the same shared context, minimizing miscommunication and rework.
+
+## Try It Yourself
+
+### Running the Example
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the API
+uvicorn examples.minimal.src.main:app --reload
+
+# Run tests
+pytest examples/minimal/src/test_main.py
+```
+
+### Using This as a Template
+1. Copy the `docs/` structure
+2. Fill in your own vision, requirements, design, and rules
+3. Generate a reading list for your task
+4. Share with AI and iterate
+5. Validate with `validate_context.py --strict`
+
+## Key Takeaways
+
+- **Documentation is not overhead** - It's the foundation for AI collaboration
+- **30 minutes of planning** saves hours of corrections
+- **Shared context** means AI understands your full intent
+- **Validation catches drift** before it becomes technical debt
+
+This example proves that Context Hive works even for tiny projects. Scale is TBD.

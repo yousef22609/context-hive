@@ -212,6 +212,70 @@ Context Hive works well for:
 
 See [APPLICABILITY.md](APPLICABILITY.md) for detailed guidance.
 
+## Development Setup
+
+### For Contributors
+
+If you want to contribute to Context Hive itself, follow these steps:
+
+```bash
+# Clone the repository
+git clone https://github.com/Petsuro85/context-hive.git
+cd context-hive
+
+# Switch to develop branch
+git checkout develop
+
+# Run the bootstrap script to set up your environment
+bash scripts/bootstrap_dev.sh
+
+# This will:
+# - Create a Python virtual environment
+# - Install all dependencies
+# - Set up pre-commit hooks
+# - Run initial validation
+```
+
+### Development Workflow
+
+Context Hive uses a **develop → master** workflow:
+
+- **develop**: Active development branch where all work happens
+- **master**: Protected production branch for public releases
+
+**Before submitting changes:**
+```bash
+# Run full validation suite
+bash scripts/validate_all.sh
+
+# This runs:
+# - Schema validation (strict mode)
+# - Dependency graph generation
+# - Reading list generation
+```
+
+### Useful Scripts
+
+```bash
+# Generate reading list for a service/task
+bash scripts/make_readinglist.sh sample_service implement_api
+
+# Generate release notes from commits
+bash scripts/release_notes.sh
+
+# Bootstrap development environment
+bash scripts/bootstrap_dev.sh
+```
+
+### Pre-commit Hooks
+
+Pre-commit hooks automatically run on every commit to ensure code quality:
+- Python: black (formatting), ruff (linting), mypy (type checking)
+- Markdown: mdformat (formatting)
+- General: trailing whitespace, YAML/JSON validation
+
+If hooks fail, fix the issues and commit again.
+
 ## Contributing
 
 We welcome contributions! This includes:

@@ -12,7 +12,13 @@
       "Bash(done)",
       "Bash(pip install:*)",
       "Bash(pip3 install:*)",
-      "Bash(then echo \"✅ $doc exists\")"
+      "Bash(then echo \"✅ $doc exists\")",
+      "Bash(git checkout:*)",
+      "Bash(git pull:*)",
+      "Bash(mkdir:*)",
+      "Bash(bash scripts/validate_all.sh:*)",
+      "Bash(dos2unix:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

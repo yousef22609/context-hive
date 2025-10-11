@@ -1,5 +1,15 @@
 # Core dependencies for Context Hive Hub tools
 pyyaml==6.0.1
+jsonschema==4.20.0
+
+# Code quality and formatting
+ruff==0.1.8
+black==23.12.1
+mypy==1.7.1
+
+# Markdown formatting
+mdformat==0.7.17
+mdformat-gfm==0.3.5
 
 # Optional: for service implementation examples
 fastapi==0.104.1

@@ -131,6 +131,13 @@ AI collaboration?            (culture change needed)
 
 ## Anti-Patterns (Don't Use Context Hive If...)
 
+> **⚠️ WARNING: When NOT to Use Context Hive**
+>
+> Context Hive requires upfront investment in documentation and team commitment
+> to maintaining that documentation. If your project or team cannot support this,
+> Context Hive will feel like burden rather than benefit. Be honest about your
+> constraints before adopting this methodology.
+
 ### ❌ No Time for Documentation
 If you think "I'll just code it quickly", Context Hive will feel like overhead. The methodology requires upfront documentation investment.
 

@@ -226,6 +226,63 @@ Areas we're actively exploring:
 4. **Measurement**: Quantifying effectiveness and ROI
 5. **Community Patterns**: Collecting and sharing what works
 
+## Lightweight Operations Guide
+
+Context Hive can be adapted for different project sizes and team constraints:
+
+### Minimum Viable Documentation (4 Required Documents)
+
+**Phase 0 - Core Pillars (REQUIRED)**:
+- `docs/vision.md` - Why and what success looks like
+- `docs/requirements.md` - Functional and non-functional requirements
+- `docs/design.md` - Technical decisions and architecture
+- `docs/rules.md` - Development standards and conventions
+
+These four documents are the absolute minimum for Context Hive to work effectively. Skip any of them, and AI will lack critical context.
+
+### Scaling the Documentation
+
+**For Tiny Projects (< 10 files)**:
+- Each doc can be 1-2 pages
+- Focus on key decisions only
+- Update as you learn
+- Total time: 2-4 hours
+
+**For Small Projects (10-50 files)**:
+- Each doc 2-5 pages
+- Include rationale for decisions
+- Document integration points
+- Total time: 4-8 hours
+
+**For Medium Projects (50-200 files)**:
+- Consider doc-per-module structure
+- Keep Phase 0 docs as overview
+- Add module-specific documentation
+- Total time: 8-16 hours initial, continuous updates
+
+### When to Update Documentation
+
+**Required Updates**:
+- Architecture changes
+- New requirements or constraints
+- Tech stack changes
+- Breaking API changes
+
+**Optional Updates**:
+- Implementation details (let code be the documentation)
+- Temporary workarounds
+- Minor style tweaks
+- Internal refactoring
+
+### Red Flags: Documentation Gone Wrong
+
+Stop and reassess if:
+- ❌ Spending more time on docs than code
+- ❌ Docs haven't been updated in > 2 weeks but code changed
+- ❌ Team doesn't read docs anymore
+- ❌ AI constantly contradicts documentation
+- ❌ Docs and code describe different systems
+
 ## Contributing to Theory
 
 This theory is not fixed. It evolves through:

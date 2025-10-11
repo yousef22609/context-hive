@@ -4,11 +4,19 @@
     "sample_service": {
       "name": "sample_service",
       "version": "1.0.0",
+      "owners": [
+        "Context Hive Team"
+      ],
       "dependencies": [
         "docs/vision.md",
         "docs/requirements.md",
         "docs/design.md",
         "docs/rules.md"
+      ],
+      "docs": [],
+      "tags": [
+        "sample",
+        "example"
       ],
       "tasks": {
         "implement_api": {

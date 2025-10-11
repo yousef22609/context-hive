@@ -1,7 +1,7 @@
-name: sample_service
+name: your_service_name
 version: 1.0.0
 owners:
-  - Context Hive Team
+  - Your Name
 dependencies:
   - docs/vision.md
   - docs/requirements.md
@@ -9,16 +9,15 @@ dependencies:
   - docs/rules.md
 docs: []
 tags:
-  - sample
-  - example
+  - your-tag
 
 tasks:
-  implement_api:
+  your_task_name:
     documents:
       - docs/vision.md
       - docs/requirements.md
       - docs/design.md
       - docs/rules.md
-      - services/sample_service/service.meta.yaml
+      - services/your_service_name/service.meta.yaml
     estimated_tokens: 8000
     priority: high
