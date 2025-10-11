@@ -1,0 +1,19 @@
+name: sample_service
+version: 1.0.0
+
+dependencies:
+  - docs/vision.md
+  - docs/requirements.md
+  - docs/design.md
+  - docs/rules.md
+
+tasks:
+  implement_api:
+    documents:
+      - docs/vision.md
+      - docs/requirements.md
+      - docs/design.md
+      - docs/rules.md
+      - services/sample_service/service.meta.yaml
+    estimated_tokens: 8000
+    priority: high

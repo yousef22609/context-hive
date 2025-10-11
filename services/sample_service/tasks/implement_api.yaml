@@ -1,0 +1,20 @@
+task: implement_api
+description: Implement REST API endpoints for sample service
+
+context:
+  - Read docs/vision.md to understand project vision and goals
+  - Read docs/requirements.md to understand functional requirements
+  - Read docs/design.md to understand technical architecture
+  - Read docs/rules.md to understand development standards
+  - Read service.meta.yaml for service-specific configuration
+
+steps:
+  - Define API routes
+  - Implement business logic
+  - Add error handling
+  - Write tests
+
+validation:
+  - All endpoints return correct status codes
+  - API matches design specification
+  - Tests pass with >80% coverage

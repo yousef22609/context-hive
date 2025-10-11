@@ -1,0 +1,7 @@
+graph TD
+    A[docs/vision.md] --> B[docs/requirements.md]
+    B --> C[docs/design.md]
+    D[docs/rules.md] --> C
+    A --> D
+    C --> E[services/sample_service]
+    E --> F[implement_api task]

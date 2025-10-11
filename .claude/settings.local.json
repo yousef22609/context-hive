@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod:*)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(cat:*)",
+      "Bash(for doc in docs/vision.md docs/requirements.md docs/design.md docs/rules.md)",
+      "Bash(do if [ -f \"$doc\" ])",
+      "Bash(else echo \"❌ $doc MISSING\")",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(pip install:*)",
+      "Bash(pip3 install:*)",
+      "Bash(then echo \"✅ $doc exists\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
