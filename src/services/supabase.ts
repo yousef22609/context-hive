@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 import { Room, RoomMember, RoomMessage, Round, RoundQuestion, AIUse, User, Friend, PointsTransaction } from '../types/room';
 import { toast } from 'sonner';
@@ -410,101 +409,166 @@ export const addPoints = async (
 
 // Realtime subscriptions
 export const subscribeToRoomMessages = (roomId: string, callback: (message: RoomMessage) => void) => {
-  if (!isSupabaseAvailable()) {
+  if (!isSupabaseAvailable() || !supabaseClient) {
+    console.error("Supabase client not available for subscription");
     return () => {}; // Return empty unsubscribe function
   }
   
-  const channel = supabaseClient.channel(`room_messages:${roomId}`);
+  console.log(`Subscribing to room messages for room ${roomId}`);
   
-  channel
-    .on('postgres_changes', 
-    {
-      event: 'INSERT',
-      schema: 'public',
-      table: 'room_messages',
-      filter: `room_id=eq.${roomId}`
-    },
-    async (payload) => {
-      // Fetch user details
-      const { data: userData } = await supabaseClient
-        .from('profiles')
-        .select('username')
-        .eq('id', payload.new.user_id)
-        .single();
+  const channel = supabaseClient
+    .channel(`room_messages:${roomId}`)
+    .on(
+      'postgres_changes', 
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'room_messages',
+        filter: `room_id=eq.${roomId}`
+      },
+      async (payload) => {
+        console.log("Received message payload:", payload);
         
-      const message: RoomMessage = {
-        id: payload.new.id,
-        room_id: payload.new.room_id,
-        user_id: payload.new.user_id,
-        username: userData?.username,
-        message: payload.new.message,
-        sent_at: payload.new.sent_at
-      };
-      callback(message);
-    })
-    .subscribe();
+        try {
+          // Fetch user details
+          const { data: userData } = await supabaseClient
+            .from('profiles')
+            .select('username')
+            .eq('id', payload.new.user_id)
+            .single();
+          
+          const message: RoomMessage = {
+            id: payload.new.id,
+            room_id: payload.new.room_id,
+            user_id: payload.new.user_id,
+            username: userData?.username || 'مستخدم',
+            message: payload.new.message,
+            sent_at: payload.new.sent_at
+          };
+          
+          console.log("Processed message:", message);
+          callback(message);
+        } catch (error) {
+          console.error("Error processing message payload:", error);
+        }
+      }
+    )
+    .subscribe((status) => {
+      console.log(`Room messages subscription status: ${status}`);
+      if (status === 'SUBSCRIBED') {
+        console.log(`Successfully subscribed to room_messages:${roomId}`);
+      } else if (status === 'CHANNEL_ERROR') {
+        console.error(`Error subscribing to room_messages:${roomId}`);
+        toast.error("حدث خطأ في الاتصال بالغرفة، جاري إعادة الاتصال...");
+      }
+    });
     
   return () => {
+    console.log(`Unsubscribing from room_messages:${roomId}`);
     supabaseClient.removeChannel(channel);
   };
 };
 
 export const subscribeToRoomMembers = (roomId: string, callback: (member: RoomMember, eventType: 'INSERT' | 'DELETE') => void) => {
-  if (!isSupabaseAvailable()) {
+  if (!isSupabaseAvailable() || !supabaseClient) {
+    console.error("Supabase client not available for subscription");
     return () => {}; // Return empty unsubscribe function
   }
   
-  const channel = supabaseClient.channel(`room_members:${roomId}`);
+  console.log(`Subscribing to room members for room ${roomId}`);
   
-  channel
-    .on('postgres_changes',
-    {
-      event: 'INSERT',
-      schema: 'public',
-      table: 'room_members',
-      filter: `room_id=eq.${roomId}`
-    },
-    async (payload) => {
-      // Fetch user details
-      const { data: userData } = await supabaseClient
-        .from('profiles')
-        .select('username, avatar_url')
-        .eq('id', payload.new.user_id)
-        .single();
+  const channel = supabaseClient
+    .channel(`room_members:${roomId}`)
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'room_members',
+        filter: `room_id=eq.${roomId}`
+      },
+      async (payload) => {
+        console.log("New member joined:", payload);
+        
+        try {
+          // Fetch user details
+          const { data: userData } = await supabaseClient
+            .from('profiles')
+            .select('username, avatar_url')
+            .eq('id', payload.new.user_id)
+            .single();
           
-      const member: RoomMember = {
-        id: payload.new.id,
-        room_id: payload.new.room_id,
-        user_id: payload.new.user_id,
-        username: userData?.username,
-        avatar_url: userData?.avatar_url,
-        joined_at: payload.new.joined_at
-      };
-      callback(member, 'INSERT');
-    })
-    .on('postgres_changes',
-    {
-      event: 'DELETE',
-      schema: 'public',
-      table: 'room_members',
-      filter: `room_id=eq.${roomId}`
-    },
-    (payload) => {
-      // For DELETE events we need to ensure payload.old has all required properties
-      const oldMember = payload.old as Partial<RoomMember>;
-      const member: RoomMember = {
-        id: oldMember.id || '',
-        room_id: oldMember.room_id || '',
-        user_id: oldMember.user_id || '',
-        username: oldMember.username,
-        avatar_url: oldMember.avatar_url,
-        joined_at: oldMember.joined_at || new Date().toISOString()
-      };
-      callback(member, 'DELETE');
-    })
-    .subscribe();
-    
+          const member: RoomMember = {
+            id: payload.new.id,
+            room_id: payload.new.room_id,
+            user_id: payload.new.user_id,
+            username: userData?.username || 'لاعب جديد',
+            avatar_url: userData?.avatar_url,
+            joined_at: payload.new.joined_at
+          };
+          
+          console.log("Processed member join:", member);
+          callback(member, 'INSERT');
+        } catch (error) {
+          console.error("Error processing member join:", error);
+        }
+      }
+    )
+    .on(
+      'postgres_changes',
+      {
+        event: 'DELETE',
+        schema: 'public',
+        table: 'room_members',
+        filter: `room_id=eq.${roomId}`
+      },
+      async (payload) => {
+        console.log("Member left:", payload);
+        
+        // For DELETE events we need to ensure payload.old has all required properties
+        const oldMember = payload.old as Partial<RoomMember>;
+        
+        try {
+          // Try to fetch username if possible
+          let username = oldMember.username;
+          if (!username && oldMember.user_id) {
+            const { data: userData } = await supabaseClient
+              .from('profiles')
+              .select('username')
+              .eq('id', oldMember.user_id)
+              .single();
+            username = userData?.username;
+          }
+          
+          const member: RoomMember = {
+            id: oldMember.id || '',
+            room_id: oldMember.room_id || '',
+            user_id: oldMember.user_id || '',
+            username: username || 'لاعب',
+            avatar_url: oldMember.avatar_url,
+            joined_at: oldMember.joined_at || new Date().toISOString()
+          };
+          
+          console.log("Processed member leave:", member);
+          callback(member, 'DELETE');
+        } catch (error) {
+          console.error("Error processing member leave:", error);
+        }
+      }
+    )
+    .subscribe((status) => {
+      console.log(`Room members subscription status: ${status}`);
+      if (status === 'SUBSCRIBED') {
+        console.log(`Successfully subscribed to room_members:${roomId}`);
+      } else if (status === 'CHANNEL_ERROR') {
+        console.error(`Error subscribing to room_members:${roomId}`);
+        toast.error("حدث خطأ في الاتصال بقائمة اللاعبين، جاري إعادة الاتصال...");
+      }
+    });
+  
   return () => {
+    console.log(`Unsubscribing from room_members:${roomId}`);
     supabaseClient.removeChannel(channel);
   };
 };
+

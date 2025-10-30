@@ -3,8 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 import { toast } from 'sonner';
 
 // Get Supabase credentials with fallback values for development
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseUrl = 'https://vczcrraoupoblbfrjsam.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZjemNycmFvdXBvYmxiZnJqc2FtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUwNTcyMDcsImV4cCI6MjA2MDYzMzIwN30.yir5pFh5XH0fhZrOlbw02AZ6qJLCemcMmb_kTx-e3Cc';
 
 // Check if URL and key are available
 const isSupabaseConfigured = supabaseUrl && supabaseAnonKey;
@@ -20,6 +20,9 @@ export const supabase = isSupabaseConfigured
         persistSession: true,
         autoRefreshToken: true,
         storage: localStorage
+      },
+      realtime: {
+        connectTimeout: 20000 // increase connection timeout
       }
     })
   : null;

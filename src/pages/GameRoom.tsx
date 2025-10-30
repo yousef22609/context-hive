@@ -28,6 +28,7 @@ const GameRoom: React.FC = () => {
   const [currentRound, setCurrentRound] = useState<Round | null>(null);
   const [questions, setQuestions] = useState<RoundQuestion[]>([]);
   const [aiHelpsUsed, setAiHelpsUsed] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Detect if user is host (room creator)
   const isHost = user && players.some(player => 
@@ -43,17 +44,26 @@ const GameRoom: React.FC = () => {
   // Load room data on mount
   useEffect(() => {
     const loadRoomData = async () => {
-      if (!roomId || !user) return;
+      if (!roomId || !user) {
+        setIsLoading(false);
+        return;
+      }
       
       try {
+        console.log(`Loading data for room ${roomId}`);
+        setIsLoading(true);
+        
         const roomMembers = await getRoomMembers(roomId);
+        console.log("Loaded room members:", roomMembers);
         setPlayers(roomMembers);
         
         const roomMessages = await getRoomMessages(roomId);
+        console.log("Loaded room messages:", roomMessages);
         setMessages(roomMessages);
         
         const round = await getCurrentRound(roomId);
         if (round) {
+          console.log("Current round:", round);
           setCurrentRound(round);
           setGameStarted(true);
           
@@ -62,6 +72,7 @@ const GameRoom: React.FC = () => {
           }
           
           const roundQuestions = await getRoundQuestions(round.id);
+          console.log("Round questions:", roundQuestions);
           setQuestions(roundQuestions);
           
           const startTime = new Date(round.start_time).getTime();
@@ -72,6 +83,8 @@ const GameRoom: React.FC = () => {
       } catch (error) {
         console.error("Error loading room data:", error);
         toast.error("حدث خطأ أثناء تحميل بيانات الغرفة");
+      } finally {
+        setIsLoading(false);
       }
     };
     
@@ -82,25 +95,44 @@ const GameRoom: React.FC = () => {
   useEffect(() => {
     if (!roomId) return;
     
+    console.log(`Setting up realtime subscriptions for room ${roomId}`);
+    
     const unsubscribeMessages = subscribeToRoomMessages(roomId, (newMessage) => {
-      setMessages(prev => [...prev, newMessage]);
+      console.log("Received new message in subscription:", newMessage);
+      setMessages(prev => {
+        // Check if message already exists to prevent duplicates
+        if (prev.some(m => m.id === newMessage.id)) {
+          return prev;
+        }
+        return [...prev, newMessage];
+      });
     });
     
     const unsubscribeMembers = subscribeToRoomMembers(roomId, (member, eventType) => {
+      console.log(`Received member ${eventType} event:`, member);
+      
       if (eventType === 'INSERT') {
         setPlayers(prev => {
+          // Check if player already exists
           const playerExists = prev.some(p => p.user_id === member.user_id);
           if (playerExists) return prev;
+          
+          console.log(`Adding player ${member.username} to list`);
+          toast.info(`${member.username || 'لاعب جديد'} انضم إلى الغرفة`);
           return [...prev, member];
         });
-        toast.info(`${member.username || 'لاعب جديد'} انضم إلى الغرفة`);
       } else if (eventType === 'DELETE') {
-        setPlayers(prev => prev.filter(p => p.id !== member.id));
-        toast.info(`${member.username || 'لاعب'} غادر الغرفة`);
+        setPlayers(prev => {
+          const filtered = prev.filter(p => p.id !== member.id && p.user_id !== member.user_id);
+          console.log(`Removing player ${member.username} from list`);
+          toast.info(`${member.username || 'لاعب'} غادر الغرفة`);
+          return filtered;
+        });
       }
     });
     
     return () => {
+      console.log(`Cleaning up realtime subscriptions for room ${roomId}`);
       unsubscribeMessages();
       unsubscribeMembers();
     };
@@ -131,7 +163,10 @@ const GameRoom: React.FC = () => {
     if (!message.trim() || !user || !roomId) return;
     
     try {
-      await sendRoomMessage(roomId, user.id, message);
+      console.log(`Sending message: "${message}" to room ${roomId}`);
+      const result = await sendRoomMessage(roomId, user.id, message);
+      console.log("Message sent result:", result);
+      
       setMessage('');
       
       if (gameStarted && currentRound && message.trim().toLowerCase() === currentRound.word.toLowerCase() &&
@@ -282,6 +317,16 @@ const GameRoom: React.FC = () => {
       toast.error("حدث خطأ أثناء طلب تلميح من الذكاء الاصطناعي");
     }
   };
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-[70vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
